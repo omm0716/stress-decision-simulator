@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { SimulatorInputs, ExpenseLeakItem, CarPurchaseConfig, HomePurchaseConfig } from './types/simulator';
+import type { SimulatorInputs, ExpenseLeakItem, IncomeShockEvent, CarPurchaseConfig, HomePurchaseConfig } from './types/simulator';
 import { runStressSimulation } from './utils/engine';
 import { Header } from './components/Header';
 import { GuideBanner } from './components/GuideBanner';
@@ -93,6 +93,25 @@ const DEFAULT_HOME_PURCHASE: HomePurchaseConfig = {
   annualAppreciationRate: 2.5,
 };
 
+const DEFAULT_INCOME_SHOCKS: IncomeShockEvent[] = [
+  {
+    id: 'shock-1',
+    name: '1차 이직 공백',
+    year: 3,
+    durationMonths: 3,
+    monthlySurvivalExpense: 150,
+    isActive: true,
+  },
+  {
+    id: 'shock-2',
+    name: '구조조정/권고사직',
+    year: 6,
+    durationMonths: 4,
+    monthlySurvivalExpense: 180,
+    isActive: false,
+  },
+];
+
 const DEFAULT_INPUTS: SimulatorInputs = {
   initialSeed: 1500, // 1500만원
   monthlySavings: 100, // 100만원
@@ -103,11 +122,8 @@ const DEFAULT_INPUTS: SimulatorInputs = {
   // 현실 커스텀 지출 누수 목록
   expenseLeaks: DEFAULT_EXPENSE_LEAKS,
 
-  // 수입 중단 리얼리티 쇼크 (3년차 4개월 실직)
-  enableIncomeShock: true,
-  incomeShockYear: 3,
-  incomeShockDurationMonths: 4,
-  monthlySurvivalExpense: 150,
+  // ⚠️ 다중 수입 중단 쇼크 목록
+  incomeShocks: DEFAULT_INCOME_SHOCKS,
 
   // 🚗 대형 지름 1: 자동차 구매
   carPurchase: DEFAULT_CAR_PURCHASE,

@@ -13,27 +13,37 @@ export interface ExpenseLeakItem {
   isActive: boolean;
 }
 
+// ⚠️ 수입 중단(실직/이직 공백/안식년) 이벤트
+export interface IncomeShockEvent {
+  id: string;
+  name: string; // 예: '1차 이직 공백', '구조조정/희망퇴직', '안식년/갭이어'
+  year: number; // 몇 년차에 터지는가?
+  durationMonths: number; // 몇 개월 동안 끊기는가? (1~12)
+  monthlySurvivalExpense: number; // 무소득 기간 월 필수 생존비용 (만원)
+  isActive: boolean;
+}
+
 // 🚗 자동차 구매 설정
 export interface CarPurchaseConfig {
   enabled: boolean;
-  purchaseYear: number; // N년차에 구매 (기본 2년차)
-  carPrice: number; // 차량 가격 (만원, 예: 4800)
-  downPayment: number; // 선수금 (만원, 예: 1000)
-  loanMonths: number; // 할부 개월 (예: 60)
-  loanRate: number; // 할부 금리 (%, 예: 5.5)
-  monthlyMaintenance: number; // 월 보험료/유류비/자동차세 (만원, 예: 45)
-  annualDepreciationRate: number; // 연간 감가상각률 (%, 기본 15)
+  purchaseYear: number;
+  carPrice: number;
+  downPayment: number;
+  loanMonths: number;
+  loanRate: number;
+  monthlyMaintenance: number;
+  annualDepreciationRate: number;
 }
 
 // 🏠 내 집 마련 / 주택담보대출 설정
 export interface HomePurchaseConfig {
   enabled: boolean;
-  purchaseYear: number; // N년차에 매수 (기본 4년차)
-  homePrice: number; // 집값 (만원, 예: 60000 = 6억원)
-  downPayment: number; // 자기자본 선수금 (만원, 예: 20000 = 2억원)
-  mortgageYears: number; // 대출 만기 (년, 예: 30)
-  mortgageRate: number; // 주담대 금리 (%, 예: 4.2)
-  annualAppreciationRate: number; // 연간 집값 변동률 (%, 기본 2.5)
+  purchaseYear: number;
+  homePrice: number;
+  downPayment: number;
+  mortgageYears: number;
+  mortgageRate: number;
+  annualAppreciationRate: number;
 }
 
 export interface SimulatorInputs {
@@ -45,11 +55,8 @@ export interface SimulatorInputs {
 
   expenseLeaks: ExpenseLeakItem[];
   
-  // 돌발 수입 중단 쇼크
-  enableIncomeShock: boolean;
-  incomeShockYear: number;
-  incomeShockDurationMonths: number;
-  monthlySurvivalExpense: number; // 만원
+  // ⚠️ 다중 수입 중단 쇼크 목록
+  incomeShocks: IncomeShockEvent[];
 
   // 🚗 대형 지름 1: 자동차 구매
   carPurchase: CarPurchaseConfig;
@@ -65,12 +72,12 @@ export interface SimulatorInputs {
 export interface YearSimulationPoint {
   year: number;
   label: string;
-  idealBalance: number; // 장밋빛 복리 순자산 (만원)
-  normalBalance: number; // 현실 반영 순자산 (만원)
-  stressBalance: number; // 스트레스 순자산 (만원)
-  liquidBalance: number; // 최악의 순간 실제 쥐고 있는 현금/유동성 잔고 (만원)
-  totalPrincipal: number; // 순수 원금 누적 (만원)
-  accumulatedLeakage: number; // 누적 지출 누수 (만원)
+  idealBalance: number;
+  normalBalance: number;
+  stressBalance: number;
+  liquidBalance: number;
+  totalPrincipal: number;
+  accumulatedLeakage: number;
   isCrashYear: boolean;
   hadIncomeShock: boolean;
   hadCarPurchase: boolean;
@@ -88,7 +95,7 @@ export interface SimulationResult {
   finalIdeal: number;
   finalNormal: number;
   finalStress: number;
-  finalLiquidBalance: number; // 최종 유동성 현금 잔고
+  finalLiquidBalance: number;
   totalInvestedPrincipal: number;
   totalLeakageAmount: number;
   totalMonthlyLeak: number;
@@ -96,15 +103,15 @@ export interface SimulationResult {
   topCulpritMonthly?: number;
 
   carImpactSummary?: {
-    totalPaidForCar: number; // 차에 들어간 총비용 (할부+유지비+선수금)
-    finalCarValue: number; // 감가상각 후 차의 남은 잔존가치
-    depreciationLoss: number; // 증발한 감가상각 손실
+    totalPaidForCar: number;
+    finalCarValue: number;
+    depreciationLoss: number;
   };
 
   homeImpactSummary?: {
-    monthlyMortgage: number; // 매달 나가는 주담대 원리금
-    totalInterestPaid: number; // 은행에 낸 총 대출 이자
-    finalHomeValue: number; // 최종 집값 평가액
+    monthlyMortgage: number;
+    totalInterestPaid: number;
+    finalHomeValue: number;
   };
   
   maxDrawdownRate: number;
