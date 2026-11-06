@@ -4,6 +4,7 @@ import type {
   YearSimulationPoint,
   MentalRiskLevel,
   ExpenseLeakItem,
+  EssentialExpenseItem,
 } from '../types/simulator';
 
 export function calculateItemMonthlyLeak(item: ExpenseLeakItem): number {
@@ -13,6 +14,10 @@ export function calculateItemMonthlyLeak(item: ExpenseLeakItem): number {
     return item.frequency * item.costPerUnit * netRatio;
   }
   return (item.frequency * item.costPerUnit * netRatio) / 12;
+}
+
+export function calculateTotalEssentialMonthly(items: EssentialExpenseItem[]): number {
+  return items.reduce((acc, item) => (item.isActive ? acc + item.monthlyCost : acc), 0);
 }
 
 // 원리금 균등분할 상환 월 납입금 계산 (PMT 공식)
@@ -26,7 +31,8 @@ function calculateMonthlyPayment(principal: number, annualRate: number, totalMon
 export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
   const {
     initialSeed,
-    monthlySavings,
+    monthlyNetIncome,
+    essentialExpenses,
     targetYears,
     expectedAnnualReturn,
     annualSavingsGrowthRate,
@@ -35,11 +41,18 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
     carPurchase,
     homePurchase,
     marketCrashMode,
+    inflationRate,
   } = inputs;
 
   const monthlyReturnRate = Math.pow(1 + expectedAnnualReturn / 100, 1 / 12) - 1;
-  
-  // 동적 누수 지출 목록 합산 (만원)
+
+  // 1. 숨만 쉬어도 나가는 기초 생존 생활비 합산 (월세, 마트 장보기, 공과금, 생필품 등)
+  const totalMonthlyEssential = calculateTotalEssentialMonthly(essentialExpenses);
+
+  // 1년차 기준 기초 생활비 제외 후 남는 최대 저축 여력
+  const baseMonthlySavingsCapacity = Math.max(0, monthlyNetIncome - totalMonthlyEssential);
+
+  // 2. 동적 누수 지출 목록 합산 (배달, OTT, 커피, 택시 등)
   let totalMonthlyLeak = 0;
   let topCulpritName = '';
   let topCulpritMonthly = 0;
@@ -52,6 +65,9 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
       topCulpritName = item.name;
     }
   });
+
+  // 1년차 실제 매월 계좌에 적립되는 금액 (음수면 적자)
+  const actualMonthlyInvested = monthlyNetIncome - totalMonthlyEssential - totalMonthlyLeak;
 
   // 🚗 차량 할부 계산
   const carLoanPrincipal = Math.max(0, carPurchase.carPrice - carPurchase.downPayment);
@@ -73,6 +89,7 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
   let liquidCash = initialSeed;
   let cumulativeInvested = initialSeed;
   let cumulativeLeak = 0;
+  let cumulativeEssential = 0;
 
   let carCurrentValue = 0;
   let homeCurrentValue = 0;
@@ -92,9 +109,16 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
     let isCrashYear = false;
     let crashMultiplier = 1;
 
-    // 1. 연차별 월 저축액 (연봉 인상률 반영)
-    const yearGrowthFactor = Math.pow(1 + annualSavingsGrowthRate / 100, year - 1);
-    const thisYearBaseSavings = Math.round(monthlySavings * yearGrowthFactor);
+    // 1. 연차별 세후 월급 (연봉 인상률 반영) & 기초 생활비 (장바구니 물가상승률 절반 수준 반영)
+    const incomeGrowthFactor = Math.pow(1 + annualSavingsGrowthRate / 100, year - 1);
+    const livingCostInflationFactor = Math.pow(1 + (inflationRate * 0.6) / 100, year - 1);
+
+    const thisYearMonthlyIncome = Math.round(monthlyNetIncome * incomeGrowthFactor);
+    const thisYearMonthlyEssential = Math.round(totalMonthlyEssential * livingCostInflationFactor);
+
+    // 기초 생활비를 빼고 남은 당해 연도 월간 저축 가능 여력 (적자 가능)
+    const thisYearDisposable = thisYearMonthlyIncome - thisYearMonthlyEssential;
+    const thisYearBaseSavings = Math.max(0, thisYearDisposable);
 
     // 2. 🚗 자동차 구매 이벤트
     const isCarBuyYear = carPurchase.enabled && year === Math.min(carPurchase.purchaseYear, targetYears);
@@ -118,7 +142,7 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
     // 4. ⚠️ 다중 수입 중단(실직/이직 공백) 쇼크 검사
     const activeShocksThisYear = incomeShocks.filter((s) => s.isActive && s.year === year);
     let totalShockMonthsThisYear = 0;
-    let weightedSurvivalExpense = 150;
+    let shockMonthlyDrain = thisYearMonthlyEssential;
 
     if (activeShocksThisYear.length > 0) {
       totalShockMonthsThisYear = Math.min(
@@ -126,9 +150,11 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
         activeShocksThisYear.reduce((sum, s) => sum + s.durationMonths, 0)
       );
       totalAllShockMonths += totalShockMonthsThisYear;
-      weightedSurvivalExpense = Math.max(
+      const configuredMaxShockExpense = Math.max(
         ...activeShocksThisYear.map((s) => s.monthlySurvivalExpense)
       );
+      // 실직 기간에는 최소한 기초 생존비(월세+마트+공과금+생필품) 또는 설정된 생존비 중 큰 금액이 통장에서 빠져나감
+      shockMonthlyDrain = Math.max(thisYearMonthlyEssential, configuredMaxShockExpense);
 
       activeShocksThisYear.forEach((s) => {
         events.push(`⚠️ ${s.name} (${s.durationMonths}개월)`);
@@ -159,11 +185,11 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
 
     // 6. 12개월 시뮬레이션
     for (let m = 0; m < 12; m++) {
-      // 이상적 모델: 무차량, 무실직, 무누수 복리
+      // 이상적 모델: 기초 생활비(월세·마트·공과금)만 지출하고, 사치 누수 0원, 실직 0회로 남은 돈을 100% 복리 적립
       idealBal = (idealBal + thisYearBaseSavings) * (1 + monthlyReturnRate);
 
-      // 정상 모델: 현실 누수 지출만 제외
-      const effectiveMonthlyNormal = Math.max(0, thisYearBaseSavings - totalMonthlyLeak);
+      // 정상 모델: 기초 생활비 + 일상 누수(OTT·배달·커피) 제외 후 적립
+      const effectiveMonthlyNormal = Math.max(0, thisYearDisposable - totalMonthlyLeak);
       normalBal = (normalBal + effectiveMonthlyNormal) * (1 + monthlyReturnRate);
 
       // 스트레스 모델 고정 지출 계산
@@ -186,12 +212,12 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
       // 실직/무소득 달인가?
       const isShockMonth = m < totalShockMonthsThisYear;
       if (isShockMonth) {
-        // 수입 0원 + 생활비 + 대출/차량 고정비까지 자산에서 강제 매도 출혈!
-        const totalEmergencyDrain = weightedSurvivalExpense + heavyObligations;
+        // 수입 0원 + 기초생활비(월세·마트·공과금) + 대출/차량 고정비까지 자산에서 강제 매도 출혈!
+        const totalEmergencyDrain = shockMonthlyDrain + heavyObligations;
         liquidCash = Math.max(0, liquidCash - totalEmergencyDrain) * (1 + monthlyReturnRate);
         stressBal = Math.max(0, stressBal - totalEmergencyDrain) * (1 + monthlyReturnRate);
       } else {
-        const netCashflow = thisYearBaseSavings - totalMonthlyLeak - heavyObligations;
+        const netCashflow = thisYearDisposable - totalMonthlyLeak - heavyObligations;
         if (netCashflow >= 0) {
           liquidCash = (liquidCash + netCashflow) * (1 + monthlyReturnRate);
           stressBal = (stressBal + netCashflow) * (1 + monthlyReturnRate);
@@ -204,6 +230,7 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
       }
 
       cumulativeLeak += totalMonthlyLeak;
+      cumulativeEssential += thisYearMonthlyEssential;
     }
 
     // 연말 폭락 이벤트 적용
@@ -251,6 +278,7 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
       liquidBalance: Math.round(liquidCash),
       totalPrincipal: Math.round(cumulativeInvested),
       accumulatedLeakage: Math.round(cumulativeLeak),
+      accumulatedEssential: Math.round(cumulativeEssential),
       isCrashYear,
       hadIncomeShock: totalShockMonthsThisYear > 0,
       hadCarPurchase: isCarBuyYear,
@@ -264,40 +292,58 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
 
   // 멘탈 위험도 스코어 계산
   const mddScore = Math.min(35, (maxDrawdownRate / 50) * 35);
-  const leakRatio = monthlySavings > 0 ? (totalMonthlyLeak / monthlySavings) : 0;
+  const essentialBurdenRatio = monthlyNetIncome > 0 ? totalMonthlyEssential / monthlyNetIncome : 1;
+  const essentialPenalty = essentialBurdenRatio > 0.6 ? 15 : essentialBurdenRatio > 0.45 ? 8 : 0;
+  const leakRatio = baseMonthlySavingsCapacity > 0 ? totalMonthlyLeak / baseMonthlySavingsCapacity : 1;
   const leakScore = Math.min(15, leakRatio * 15);
   
   let heavyExpensePenalty = 0;
   if (carPurchase.enabled) heavyExpensePenalty += 15;
   if (homePurchase.enabled) heavyExpensePenalty += 15;
 
-  // 실직 개월 수 및 다중 실직 횟수 페널티
   const totalActiveShocksCount = incomeShocks.filter((s) => s.isActive).length;
   const shockMonthsPenalty = Math.min(20, totalAllShockMonths * 2);
   const multiShockPenalty = totalActiveShocksCount >= 2 ? 10 : 0;
+  const deficitPenalty = actualMonthlyInvested < 0 ? 25 : 0;
 
-  const totalMentalScore = Math.min(100, Math.round(mddScore + leakScore + heavyExpensePenalty + shockMonthsPenalty + multiShockPenalty));
+  const totalMentalScore = Math.min(
+    100,
+    Math.round(
+      mddScore +
+        essentialPenalty +
+        leakScore +
+        heavyExpensePenalty +
+        shockMonthsPenalty +
+        multiShockPenalty +
+        deficitPenalty
+    )
+  );
 
   let level: MentalRiskLevel = 'SAFE';
   let title = '강철 멘탈 요새형';
-  let description = '다중 위기에도 끄떡없는 충분한 현금 유동성과 비상 안전망을 갖추고 있습니다.';
+  let description = '기초 생활비(월세·마트·공과금)를 제하고도 탄탄한 저축 여력과 비상 안전망을 확보하고 있습니다.';
   let prescription = '현재 페이스를 유지하되, 하락장에서 저가 매수할 수 있는 현금 비중 10%만 상시 유지하세요.';
 
-  if (totalMentalScore >= 75) {
+  if (actualMonthlyInvested < 0) {
     level = 'MELTDOWN';
-    title = '연쇄 실직·영끌 복합 파산 경보';
-    description = `생애 주기 동안 ${totalActiveShocksCount}회의 실직 공백과 시장 폭락이 맞물려, 계좌 잔고가 급격히 꺾이며 패닉셀 및 강제 매도에 내몰릴 확률이 98%입니다.`;
-    prescription = `반복되는 수입 중단에 대비해 최소 1년치 필수 생존 자금을 별도 CMA 파킹통장에 격리하고, 고정 대출 비용을 줄여야 합니다.`;
+    title = '만성 적자 보일러 역류 경보 (저축 불가)';
+    description = `세후 월급(${monthlyNetIncome}만원)에서 기초 생활비(${totalMonthlyEssential}만원)와 일상 누수(${Math.round(totalMonthlyLeak)}만원)를 빼면 매달 ${Math.abs(Math.round(actualMonthlyInvested))}만원씩 적자가 발생하여 종잣돈을 갉아먹고 있습니다.`;
+    prescription = `투자를 논하기 전에 월세·고정비를 줄이거나 '${topCulpritName || '구독·배달'}' 지출을 즉시 차단해 월 현금흐름을 흑자로 돌려놓아야 합니다.`;
+  } else if (totalMentalScore >= 75) {
+    level = 'MELTDOWN';
+    title = '연쇄 실직·고정비 복합 파산 경보';
+    description = `숨만 쉬어도 나가는 기초 생활비(월 ${totalMonthlyEssential}만원)와 대출 압박 속에 실직과 하락장이 겹치며, 계좌 잔고가 바닥나 강제 투매에 내몰릴 확률이 98%입니다.`;
+    prescription = `반복되는 수입 중단에 대비해 최소 6~12개월치 기초 생활비(${(totalMonthlyEssential * 6).toLocaleString()}~${(totalMonthlyEssential * 12).toLocaleString()}만원)를 별도 비상 파킹통장에 격리해야 합니다.`;
   } else if (totalMentalScore >= 50) {
     level = 'PANIC';
     title = '유동성 절벽 및 패닉 경계형';
-    description = `이직 공백이 발생할 때마다 고정 지출을 감당하지 못해, ${worstYear}년차 고비에서 심리적 공황과 극심한 잔고 스트레스가 발생합니다.`;
-    prescription = `이직 전 6개월 분량의 비상 예비비를 먼저 채워두고, 지출 누수를 선제적으로 차단하세요.`;
+    description = `월세·마트 장보기·공과금 등 고정 지출 비중이 높아, ${worstYear}년차 위기 구간에서 심리적 공황과 극심한 잔고 스트레스가 발생합니다.`;
+    prescription = `이직 전 최소 6개월치 기초 생계비(${(totalMonthlyEssential * 6).toLocaleString()}만원)를 먼저 확보하고, '${topCulpritName || '일상 누수'}' 밸브를 조이세요.`;
   } else if (totalMentalScore >= 25) {
     level = 'CAUTION';
     title = '가벼운 심장 쫄깃형';
-    description = '일시적인 소득 중단이나 시장 조정이 와도 기존 시드로 어느 정도 버텨낼 수 있습니다.';
-    prescription = '불필요한 구독료와 누수 지출을 통제하고 비상금을 안전하게 분리해두세요.';
+    description = '일시적인 소득 중단이나 시장 조정이 와도 기존 시드로 기초 생활비를 어느 정도 방어할 수 있습니다.';
+    prescription = '마트 장바구니 물가 상승에 대비해 불필요한 정기 구독료를 주기적으로 정리하세요.';
   }
 
   const finalTimelinePoint = timeline[timeline.length - 1];
@@ -310,7 +356,12 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
     finalLiquidBalance: finalTimelinePoint ? finalTimelinePoint.liquidBalance : Math.round(liquidCash),
     totalInvestedPrincipal: Math.round(cumulativeInvested),
     totalLeakageAmount: Math.round(cumulativeLeak),
+    totalEssentialAmount: Math.round(cumulativeEssential),
+    monthlyNetIncome,
+    totalMonthlyEssential: Math.round(totalMonthlyEssential * 10) / 10,
+    baseMonthlySavingsCapacity: Math.round(baseMonthlySavingsCapacity * 10) / 10,
     totalMonthlyLeak: Math.round(totalMonthlyLeak * 10) / 10,
+    actualMonthlyInvested: Math.round(actualMonthlyInvested * 10) / 10,
     topCulpritName,
     topCulpritMonthly: Math.round(topCulpritMonthly * 10) / 10,
     carImpactSummary: carPurchase.enabled

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Coins, Flame, AlertTriangle, Skull, ShieldCheck, HelpCircle } from 'lucide-react';
 import type { SimulatorInputs } from '../types/simulator';
+import { calculateItemMonthlyLeak, calculateTotalEssentialMonthly } from '../utils/engine';
+import { EssentialLivingManager } from './EssentialLivingManager';
 import { IncomeShockManager } from './IncomeShockManager';
 import { ExpenseLeakManager } from './ExpenseLeakManager';
 import { HeavyPurchasePanel } from './HeavyPurchasePanel';
@@ -18,18 +20,25 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
     });
   };
 
+  const totalMonthlyEssential = calculateTotalEssentialMonthly(inputs.essentialExpenses);
+  const totalMonthlyLeak = inputs.expenseLeaks.reduce(
+    (acc, item) => acc + calculateItemMonthlyLeak(item),
+    0
+  );
+  const baseSavingsCapacity = Math.max(0, Math.round((inputs.monthlyNetIncome - totalMonthlyEssential) * 10) / 10);
+
   return (
     <div className="space-y-6">
-      {/* 1. 기본 자본 & 석탄 화력(소득) 계획 */}
+      {/* 1. 기본 자본 & 석탄 화력(세후 월급) 계획 */}
       <div className="steam-panel p-5">
         <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-[#5c4524]">
           <div className="flex items-center gap-2.5">
             <Coins className="w-5 h-5 text-[#f0cf85]" />
             <div>
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#c99738] block">
-                VALVE NO. I — BASE CAPITAL
+                VALVE NO. I — BASE CAPITAL &amp; PAYCHECK
               </span>
-              <h2 className="text-base font-bold text-[#f7e7ce] m-0">1. 기본 자본 &amp; 소득 계획</h2>
+              <h2 className="text-base font-bold text-[#f7e7ce] m-0">1. 초기 자본 &amp; 세후 월급 설정</h2>
             </div>
           </div>
           <span className="text-[11px] text-[#bfa988] font-mono px-2 py-0.5 rounded bg-[#140f0c] border border-[#4d3a1f]">
@@ -64,23 +73,35 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
 
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="text-xs text-[#d8c7ad]">매월 추가 저축/투자액</label>
+              <label className="text-xs text-[#d8c7ad] font-bold">
+                세후 월 실수령 급여 (4대보험·세금 공제 후)
+              </label>
               <span className="text-xs font-mono font-bold text-[#f0cf85]">
-                {inputs.monthlySavings.toLocaleString()} 만원/월
+                {inputs.monthlyNetIncome.toLocaleString()} 만원/월
               </span>
             </div>
             <input
               type="range"
-              min="10"
-              max="1000"
+              min="120"
+              max="1200"
               step="10"
-              value={inputs.monthlySavings}
-              onChange={(e) => updateField('monthlySavings', Number(e.target.value))}
+              value={inputs.monthlyNetIncome}
+              onChange={(e) => {
+                const newNet = Number(e.target.value);
+                onChange({
+                  ...inputs,
+                  monthlyNetIncome: newNet,
+                  monthlySavings: Math.max(10, Math.round(newNet - totalMonthlyEssential)),
+                });
+              }}
               className="w-full cursor-pointer"
             />
-            <p className="text-[10px] text-[#9c8669] mt-1">
-              필수 생계비를 제외하고 매달 보일러에 추가로 넣을 수 있는 순수 연료입니다.
-            </p>
+            <div className="flex items-center justify-between text-[10px] text-[#9c8669] mt-1">
+              <span>통장에 찍히는 실제 월급에서 아래 기초 생존 생활비가 먼저 빠져나갑니다.</span>
+              <span className="font-mono text-[#7ec8a3]">
+                최대 저축 여력: <b>{baseSavingsCapacity}만원/월</b>
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3 pt-1">
@@ -116,7 +137,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
             </div>
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="text-xs text-[#d8c7ad]">연봉/저축 인상</label>
+                <label className="text-xs text-[#d8c7ad]">연봉 인상률</label>
                 <span className="text-xs font-mono font-bold text-[#7ec8a3]">+{inputs.annualSavingsGrowthRate}%</span>
               </div>
               <input
@@ -135,11 +156,19 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
           <div className="parchment-note p-2.5 text-[11px] leading-relaxed flex items-start gap-2">
             <HelpCircle className="w-3.5 h-3.5 text-[#f0cf85] mt-0.5 flex-shrink-0" />
             <span>
-              <b>기관사 지침:</b> 연봉/저축 인상률을 3%로 두면 숙련도가 쌓이며 매년 투입 연료량이 늘어나는 현실적 복리 모델이 완성됩니다.
+              <b>기관사 지침:</b> 과거에는 막연히 &lsquo;월 100만원 저축&rsquo;을 가정했지만, 실제로는 <b>세후 월급 - 기초 생존비(월세·장보기·공과금) - 구독/배달 누수 = 진짜 저축액</b>입니다.
             </span>
           </div>
         </div>
       </div>
+
+      {/* 1-2. 기초 생존 생활비 원장 (월세, 공과금, 핸드폰, 마트 장보기, 생필품) */}
+      <EssentialLivingManager
+        monthlyNetIncome={inputs.monthlyNetIncome}
+        items={inputs.essentialExpenses}
+        totalMonthlyLeak={totalMonthlyLeak}
+        onChange={(newItems) => updateField('essentialExpenses', newItems)}
+      />
 
       {/* 2. 다중 수입 중단 (실직/이직 공백) 리얼리티 쇼크 */}
       <IncomeShockManager
@@ -224,7 +253,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
           >
             <Skull className={`w-5 h-5 mt-0.5 ${inputs.marketCrashMode === 'blackswan' ? 'text-[#e05a47]' : 'text-[#7a6852]'}`} />
             <div>
-              <div className="text-xs font-bold text-[#f48fb1] text-[#ff8a75]">대공황 보일러 과열 (-35% &amp; -45% 연타)</div>
+              <div className="text-xs font-bold text-[#ff8a75]">대공황 보일러 과열 (-35% &amp; -45% 연타)</div>
               <div className="text-[11px] text-[#bfa988]">1873년 장기불황·2008년 금융위기급 연쇄 폭락으로 자본과 멘탈의 한계를 시험</div>
             </div>
           </button>

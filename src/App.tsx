@@ -1,5 +1,12 @@
 import { useState, useMemo } from 'react';
-import type { SimulatorInputs, ExpenseLeakItem, IncomeShockEvent, CarPurchaseConfig, HomePurchaseConfig } from './types/simulator';
+import type {
+  SimulatorInputs,
+  EssentialExpenseItem,
+  ExpenseLeakItem,
+  IncomeShockEvent,
+  CarPurchaseConfig,
+  HomePurchaseConfig,
+} from './types/simulator';
 import { runStressSimulation } from './utils/engine';
 import { Header } from './components/Header';
 import { GuideBanner } from './components/GuideBanner';
@@ -8,6 +15,41 @@ import { ChartPanel } from './components/ChartPanel';
 import { MentalReportCard } from './components/MentalReportCard';
 import { OpportunityCostCard } from './components/OpportunityCostCard';
 import { YearlyDataTable } from './components/YearlyDataTable';
+
+const DEFAULT_ESSENTIAL_EXPENSES: EssentialExpenseItem[] = [
+  {
+    id: 'ess-rent',
+    name: '초년생 원룸 월세 & 관리비',
+    category: 'rent',
+    monthlyCost: 56,
+    description: '보증금 제외 순수 월세 50만 + 공용관리비 6만 (초년생 자취 기준)',
+    isActive: true,
+  },
+  {
+    id: 'ess-mart',
+    name: '마트 장보기 & 기본 식사(집밥)',
+    category: 'groceries',
+    monthlyCost: 35,
+    description: '주 1~2회 마트 식자재 장보기(쌀·계란·고기·채소) 및 평일 점심 식대',
+    isActive: true,
+  },
+  {
+    id: 'ess-util',
+    name: '공과금(전기·가스·수도) & 핸드폰 요금',
+    category: 'utilities',
+    monthlyCost: 15,
+    description: '도시가스·전기·수도 평균 7만 + 통신비(핸드폰·인터넷) 8만',
+    isActive: true,
+  },
+  {
+    id: 'ess-nec',
+    name: '최소 생필품(샤워·세제·휴지) & 대중교통',
+    category: 'necessities',
+    monthlyCost: 14,
+    description: '샴푸·바디워시·치약·세제·휴지 등 생필품 6만 + 기후동행/K-패스 교통비 8만',
+    isActive: true,
+  },
+];
 
 const DEFAULT_EXPENSE_LEAKS: ExpenseLeakItem[] = [
   {
@@ -114,7 +156,9 @@ const DEFAULT_INCOME_SHOCKS: IncomeShockEvent[] = [
 
 const DEFAULT_INPUTS: SimulatorInputs = {
   initialSeed: 1500,
-  monthlySavings: 100,
+  monthlyNetIncome: 240,
+  monthlySavings: 120,
+  essentialExpenses: DEFAULT_ESSENTIAL_EXPENSES,
   targetYears: 10,
   expectedAnnualReturn: 8,
   annualSavingsGrowthRate: 3,
@@ -151,7 +195,7 @@ export default function App() {
         <GuideBanner />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* 좌측: 5개 증기 밸브 & 압력 조절 패널 (5 cols) */}
+          {/* 좌측: 증기 밸브 & 압력 조절 패널 (5 cols) */}
           <section className="lg:col-span-5 space-y-6">
             <InputPanel inputs={inputs} onChange={setInputs} />
           </section>

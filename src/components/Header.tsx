@@ -34,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
               </span>
             </div>
             <p className="text-xs text-[#bfa988] mt-0.5">
-              장밋빛 행복회로 증기를 빼고, <span className="text-[#e05a47] font-semibold">최악의 보일러 폭발 압력(폭락·실직·대형지출)</span>과 <span className="text-[#f0cf85] font-semibold">멘탈 마지노선</span>을 계측합니다.
+              장밋빛 행복회로 증기를 빼고, <span className="text-[#e05a47] font-semibold">최악의 보일러 폭발 압력(폭락·실직·생존비·대형지출)</span>과 <span className="text-[#f0cf85] font-semibold">멘탈 마지노선</span>을 계측합니다.
             </p>
           </div>
         </div>
@@ -49,7 +49,42 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
             onClick={() =>
               onApplyPreset({
                 initialSeed: 500,
-                monthlySavings: 70,
+                monthlyNetIncome: 220,
+                monthlySavings: 100,
+                essentialExpenses: [
+                  {
+                    id: 'ess-rent',
+                    name: '초년생 원룸 월세 & 관리비',
+                    category: 'rent',
+                    monthlyCost: 55,
+                    description: '보증금 제외 순수 월세 50만 + 관리비 5만',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-mart',
+                    name: '마트 장보기 & 기본 식사(집밥)',
+                    category: 'groceries',
+                    monthlyCost: 35,
+                    description: '마트 식자재 장보기 및 평일 점심 식대',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-util',
+                    name: '공과금(전기·가스·수도) & 핸드폰 요금',
+                    category: 'utilities',
+                    monthlyCost: 15,
+                    description: '전기·가스·수도 7만 + 핸드폰·인터넷 8만',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-nec',
+                    name: '최소 생필품(샤워·세제·휴지) & 대중교통',
+                    category: 'necessities',
+                    monthlyCost: 15,
+                    description: '샴푸·바디워시·휴지 등 생필품 7만 + 대중교통 8만',
+                    isActive: true,
+                  },
+                ],
                 targetYears: 5,
                 expectedAnnualReturn: 7,
                 annualSavingsGrowthRate: 3,
@@ -87,14 +122,49 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
             }
             className="text-xs px-3 py-1.5 rounded brass-plaque hover:brightness-110 transition-all cursor-pointer font-medium"
           >
-            ⚙ 견습 기술자 (시드 500+아반떼)
+            ⚙ 견습 기술자 (월급220·자취+아반떼)
           </button>
           <button
             type="button"
             onClick={() =>
               onApplyPreset({
                 initialSeed: 3000,
-                monthlySavings: 150,
+                monthlyNetIncome: 350,
+                monthlySavings: 190,
+                essentialExpenses: [
+                  {
+                    id: 'ess-rent',
+                    name: '오피스텔 월세 & 관리비',
+                    category: 'rent',
+                    monthlyCost: 75,
+                    description: '역세권 오피스텔 월세 및 공용관리비',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-mart',
+                    name: '마트 장보기 & 기본 식사(집밥)',
+                    category: 'groceries',
+                    monthlyCost: 45,
+                    description: '대형마트 장보기 및 직장인 점심 식대',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-util',
+                    name: '공과금(전기·가스·수도) & 핸드폰 요금',
+                    category: 'utilities',
+                    monthlyCost: 20,
+                    description: '전기·냉난방·수도 10만 + 통신비 10만',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-nec',
+                    name: '최소 생필품(샤워·세제·휴지) & 대중교통',
+                    category: 'necessities',
+                    monthlyCost: 20,
+                    description: '샤워·위생·세탁 생필품 및 교통비',
+                    isActive: true,
+                  },
+                ],
                 targetYears: 10,
                 expectedAnnualReturn: 8,
                 annualSavingsGrowthRate: 4,
@@ -140,14 +210,49 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
             }
             className="text-xs px-3 py-1.5 rounded brass-plaque hover:brightness-110 transition-all cursor-pointer font-medium"
           >
-            ⚙ 영끌 공장장 (그랜저+수도권 6.5억)
+            ⚙ 영끌 공장장 (월급350·그랜저+6.5억집)
           </button>
           <button
             type="button"
             onClick={() =>
               onApplyPreset({
                 initialSeed: 10000,
-                monthlySavings: 300,
+                monthlyNetIncome: 480,
+                monthlySavings: 385,
+                essentialExpenses: [
+                  {
+                    id: 'ess-rent',
+                    name: '본가 분담금 (월세 절감 모드)',
+                    category: 'rent',
+                    monthlyCost: 20,
+                    description: '본가 거주로 주거비 극소화',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-mart',
+                    name: '마트 장보기 & 기본 식사(집밥)',
+                    category: 'groceries',
+                    monthlyCost: 45,
+                    description: '건강식 장보기 및 식대',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-util',
+                    name: '공과금 & 알뜰폰 요금',
+                    category: 'utilities',
+                    monthlyCost: 12,
+                    description: '알뜰폰 요금제 + 공과금 분담',
+                    isActive: true,
+                  },
+                  {
+                    id: 'ess-nec',
+                    name: '최소 생필품(샤워·세제·휴지) & 대중교통',
+                    category: 'necessities',
+                    monthlyCost: 18,
+                    description: '생필품 및 대중교통 정기권',
+                    isActive: true,
+                  },
+                ],
                 targetYears: 15,
                 expectedAnnualReturn: 9,
                 annualSavingsGrowthRate: 5,
@@ -176,7 +281,7 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
             }
             className="text-xs px-3 py-1.5 rounded brass-plaque hover:brightness-110 transition-all cursor-pointer font-medium"
           >
-            ⚙ 대자본가 (무차량·무대출 풀투자)
+            ⚙ 대자본가 (무차량·절약 풀투자)
           </button>
         </div>
       </div>

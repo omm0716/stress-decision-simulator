@@ -34,7 +34,7 @@ export const YearlyDataTable: React.FC<YearlyDataTableProps> = ({ result }) => {
             </span>
             <h2 className="text-base font-bold text-[#f7e7ce] m-0">연도별 복식부기 회계 원장</h2>
             <p className="text-xs text-[#bfa988] mt-0.5">
-              원금 투입, 증기 누출, 실직 역인출 및 폭락 충격의 연차별 상세 기록부
+              원금 투입, 기초 생존비(물가반영), 일상 누출, 실직 역인출 및 폭락 충격의 연차별 상세 기록부
             </p>
           </div>
         </div>
@@ -51,13 +51,14 @@ export const YearlyDataTable: React.FC<YearlyDataTableProps> = ({ result }) => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#1e1711] text-[#d4af37] border-b-2 border-[#6b5129] font-mono">
-                <th className="py-3 px-3.5 whitespace-nowrap">연차</th>
-                <th className="py-3 px-3.5 whitespace-nowrap">주요 사건 / 보일러 충격</th>
-                <th className="py-3 px-3.5 text-right whitespace-nowrap">누적 원금</th>
-                <th className="py-3 px-3.5 text-right whitespace-nowrap">누적 누출액</th>
-                <th className="py-3 px-3.5 text-right whitespace-nowrap">스트레스 잔고</th>
-                <th className="py-3 px-3.5 text-right whitespace-nowrap">순손익 (수익률)</th>
-                <th className="py-3 px-3.5 text-right whitespace-nowrap">압력강하(MDD)</th>
+                <th className="py-3 px-3 whitespace-nowrap">연차</th>
+                <th className="py-3 px-3 whitespace-nowrap">주요 사건 / 보일러 충격</th>
+                <th className="py-3 px-3 text-right whitespace-nowrap">누적 원금</th>
+                <th className="py-3 px-3 text-right whitespace-nowrap">누적 생존비</th>
+                <th className="py-3 px-3 text-right whitespace-nowrap">누적 누출액</th>
+                <th className="py-3 px-3 text-right whitespace-nowrap">스트레스 잔고</th>
+                <th className="py-3 px-3 text-right whitespace-nowrap">순손익 (수익률)</th>
+                <th className="py-3 px-3 text-right whitespace-nowrap">압력강하(MDD)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#332616] font-mono">
@@ -72,7 +73,7 @@ export const YearlyDataTable: React.FC<YearlyDataTableProps> = ({ result }) => {
                       isWorst ? 'bg-[#361714]/50' : ''
                     } ${row.hadIncomeShock ? 'bg-[#2b1f12]/40' : ''}`}
                   >
-                    <td className="py-2.5 px-3.5 whitespace-nowrap font-sans font-bold text-[#e6d7be]">
+                    <td className="py-2.5 px-3 whitespace-nowrap font-sans font-bold text-[#e6d7be]">
                       <div className="flex items-center gap-1.5">
                         <span>{row.label}</span>
                         {isWorst && (
@@ -83,7 +84,7 @@ export const YearlyDataTable: React.FC<YearlyDataTableProps> = ({ result }) => {
                       </div>
                     </td>
 
-                    <td className="py-2.5 px-3.5 font-sans">
+                    <td className="py-2.5 px-3 font-sans">
                       {row.events.length > 0 ? (
                         <div className="flex items-center gap-1 flex-wrap">
                           {row.events.map((ev, idx) => (
@@ -106,20 +107,24 @@ export const YearlyDataTable: React.FC<YearlyDataTableProps> = ({ result }) => {
                       )}
                     </td>
 
-                    <td className="py-2.5 px-3.5 text-right text-[#d8c7ad]">
+                    <td className="py-2.5 px-3 text-right text-[#d8c7ad]">
                       {formatMoney(row.totalPrincipal)}
                     </td>
 
-                    <td className="py-2.5 px-3.5 text-right text-[#e59849]">
+                    <td className="py-2.5 px-3 text-right text-[#9c8669]">
+                      -{formatMoney(row.accumulatedEssential)}
+                    </td>
+
+                    <td className="py-2.5 px-3 text-right text-[#e59849]">
                       -{formatMoney(row.accumulatedLeakage)}
                     </td>
 
-                    <td className="py-2.5 px-3.5 text-right font-bold text-[#f7e7ce]">
+                    <td className="py-2.5 px-3 text-right font-bold text-[#f7e7ce]">
                       {formatMoney(row.stressBalance)}
                     </td>
 
                     <td
-                      className={`py-2.5 px-3.5 text-right font-semibold ${
+                      className={`py-2.5 px-3 text-right font-semibold ${
                         isNegative ? 'text-[#e05a47]' : 'text-[#7ec8a3]'
                       }`}
                     >
@@ -137,7 +142,7 @@ export const YearlyDataTable: React.FC<YearlyDataTableProps> = ({ result }) => {
                       </div>
                     </td>
 
-                    <td className="py-2.5 px-3.5 text-right">
+                    <td className="py-2.5 px-3 text-right">
                       {row.drawdownRate > 0 ? (
                         <span className="text-[#e05a47] font-bold">-{row.drawdownRate}%</span>
                       ) : (
