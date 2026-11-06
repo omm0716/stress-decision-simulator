@@ -2,6 +2,7 @@ import React from 'react';
 import { DollarSign, Flame, AlertTriangle, Skull, ShieldCheck, Briefcase, HelpCircle } from 'lucide-react';
 import type { SimulatorInputs } from '../types/simulator';
 import { ExpenseLeakManager } from './ExpenseLeakManager';
+import { HeavyPurchasePanel } from './HeavyPurchasePanel';
 
 interface InputPanelProps {
   inputs: SimulatorInputs;
@@ -232,13 +233,22 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
         onChange={(newItems) => updateField('expenseLeaks', newItems)}
       />
 
-      {/* 4. 폭락장 스트레스 시나리오 */}
+      {/* 4. 극단적 대형 지름 스트레스 (차량 & 내 집 마련) */}
+      <HeavyPurchasePanel
+        car={inputs.carPurchase}
+        home={inputs.homePurchase}
+        targetYears={inputs.targetYears}
+        onCarChange={(newCar) => updateField('carPurchase', newCar)}
+        onHomeChange={(newHome) => updateField('homePurchase', newHome)}
+      />
+
+      {/* 5. 폭락장 스트레스 시나리오 */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800/80">
           <div className="flex items-center gap-2">
             <Flame className="w-5 h-5 text-rose-500" />
             <div>
-              <h2 className="text-base font-semibold text-slate-100 m-0">4. 시장 폭락 스트레스 모드</h2>
+              <h2 className="text-base font-semibold text-slate-100 m-0">5. 시장 폭락 스트레스 모드</h2>
               <p className="text-[11px] text-slate-400 mt-0.5">주식/코인 폭락장을 만났을 때의 시뮬레이션</p>
             </div>
           </div>

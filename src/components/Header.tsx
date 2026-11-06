@@ -48,12 +48,31 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 incomeShockYear: 2,
                 incomeShockDurationMonths: 3,
                 monthlySurvivalExpense: 120,
+                carPurchase: {
+                  enabled: true,
+                  purchaseYear: 2,
+                  carPrice: 2600,
+                  downPayment: 500,
+                  loanMonths: 60,
+                  loanRate: 5.5,
+                  monthlyMaintenance: 35,
+                  annualDepreciationRate: 15,
+                },
+                homePurchase: {
+                  enabled: false,
+                  purchaseYear: 5,
+                  homePrice: 35000,
+                  downPayment: 14000,
+                  mortgageYears: 30,
+                  mortgageRate: 4.2,
+                  annualAppreciationRate: 2.5,
+                },
                 marketCrashMode: 'moderate',
               })
             }
             className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
           >
-            사회초년생 (시드 500)
+            사회초년생 (시드 500+아반떼)
           </button>
           <button
             onClick={() =>
@@ -67,12 +86,31 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 incomeShockYear: 4,
                 incomeShockDurationMonths: 4,
                 monthlySurvivalExpense: 180,
+                carPurchase: {
+                  enabled: true,
+                  purchaseYear: 3,
+                  carPrice: 4800,
+                  downPayment: 1000,
+                  loanMonths: 60,
+                  loanRate: 5.5,
+                  monthlyMaintenance: 45,
+                  annualDepreciationRate: 15,
+                },
+                homePurchase: {
+                  enabled: true,
+                  purchaseYear: 5,
+                  homePrice: 65000,
+                  downPayment: 25000,
+                  mortgageYears: 30,
+                  mortgageRate: 4.2,
+                  annualAppreciationRate: 2.5,
+                },
                 marketCrashMode: 'blackswan',
               })
             }
             className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
           >
-            안정적 직장인 (시드 3000)
+            영끌 직장인 (그랜저+수도권 6.5억)
           </button>
           <button
             onClick={() =>
@@ -86,12 +124,31 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 incomeShockYear: 5,
                 incomeShockDurationMonths: 6,
                 monthlySurvivalExpense: 250,
+                carPurchase: {
+                  enabled: false,
+                  purchaseYear: 2,
+                  carPrice: 2000,
+                  downPayment: 500,
+                  loanMonths: 60,
+                  loanRate: 5.5,
+                  monthlyMaintenance: 30,
+                  annualDepreciationRate: 15,
+                },
+                homePurchase: {
+                  enabled: false,
+                  purchaseYear: 5,
+                  homePrice: 60000,
+                  downPayment: 20000,
+                  mortgageYears: 30,
+                  mortgageRate: 4.2,
+                  annualAppreciationRate: 2.5,
+                },
                 marketCrashMode: 'blackswan',
               })
             }
             className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
           >
-            파이어족 도전 (시드 1억)
+            파이어족 도전 (무차량·무대출 풀투자)
           </button>
         </div>
       </div>

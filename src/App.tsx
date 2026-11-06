@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { SimulatorInputs, ExpenseLeakItem } from './types/simulator';
+import type { SimulatorInputs, ExpenseLeakItem, CarPurchaseConfig, HomePurchaseConfig } from './types/simulator';
 import { runStressSimulation } from './utils/engine';
 import { Header } from './components/Header';
 import { GuideBanner } from './components/GuideBanner';
@@ -72,6 +72,27 @@ const DEFAULT_EXPENSE_LEAKS: ExpenseLeakItem[] = [
   },
 ];
 
+const DEFAULT_CAR_PURCHASE: CarPurchaseConfig = {
+  enabled: false,
+  purchaseYear: 2,
+  carPrice: 4800,
+  downPayment: 1000,
+  loanMonths: 60,
+  loanRate: 5.5,
+  monthlyMaintenance: 45,
+  annualDepreciationRate: 15,
+};
+
+const DEFAULT_HOME_PURCHASE: HomePurchaseConfig = {
+  enabled: false,
+  purchaseYear: 4,
+  homePrice: 65000,
+  downPayment: 25000,
+  mortgageYears: 30,
+  mortgageRate: 4.2,
+  annualAppreciationRate: 2.5,
+};
+
 const DEFAULT_INPUTS: SimulatorInputs = {
   initialSeed: 1500, // 1500만원
   monthlySavings: 100, // 100만원
@@ -87,6 +108,12 @@ const DEFAULT_INPUTS: SimulatorInputs = {
   incomeShockYear: 3,
   incomeShockDurationMonths: 4,
   monthlySurvivalExpense: 150,
+
+  // 🚗 대형 지름 1: 자동차 구매
+  carPurchase: DEFAULT_CAR_PURCHASE,
+
+  // 🏠 대형 지름 2: 내 집 마련 / 주담대
+  homePurchase: DEFAULT_HOME_PURCHASE,
 
   marketCrashMode: 'moderate',
   inflationRate: 3,

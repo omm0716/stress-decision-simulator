@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pizza, Plane, Smartphone, Info } from 'lucide-react';
+import { Pizza, Plane, Smartphone, Info, Car, Home } from 'lucide-react';
 import type { SimulationResult } from '../types/simulator';
 import { Term } from './Term';
 
@@ -8,7 +8,16 @@ interface OpportunityCostCardProps {
 }
 
 export const OpportunityCostCard: React.FC<OpportunityCostCardProps> = ({ result }) => {
-  const { totalLeakageAmount, finalIdeal, finalNormal, totalMonthlyLeak, topCulpritName, topCulpritMonthly } = result;
+  const {
+    totalLeakageAmount,
+    finalIdeal,
+    finalNormal,
+    totalMonthlyLeak,
+    topCulpritName,
+    topCulpritMonthly,
+    carImpactSummary,
+    homeImpactSummary,
+  } = result;
 
   // 배달 & 충동 지출로 인해 증발한 복리 기회비용 (만원)
   const opportunityCostLoss = Math.max(0, finalIdeal - finalNormal);
@@ -58,6 +67,40 @@ export const OpportunityCostCard: React.FC<OpportunityCostCardProps> = ({ result
             단순히 쓴 돈의 원금 합계({totalLeakageAmount.toLocaleString()}만원)뿐만 아니라, 그 돈이 복리로 불어났을 기회비용까지 포함된 실질 손실입니다.
           </div>
         </div>
+
+        {/* 대형 지름 (차량 & 주담대) 임팩트 분석 */}
+        {(carImpactSummary || homeImpactSummary) && (
+          <div className="pt-2 border-t border-slate-800 space-y-2">
+            <div className="text-xs font-semibold text-rose-300">💥 대형 지름이 남긴 현실 청구서:</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+              {carImpactSummary && (
+                <div className="p-2.5 rounded-lg bg-amber-950/30 border border-amber-500/30">
+                  <div className="flex items-center gap-1.5 text-amber-300 font-bold mb-1">
+                    <Car className="w-3.5 h-3.5" /> 자동차 총 지출 & 감가상각
+                  </div>
+                  <div className="text-slate-300 text-[11px] space-y-0.5">
+                    <div>• 총 지출액(할부+유지비): <b className="text-white font-mono">{carImpactSummary.totalPaidForCar.toLocaleString()}만원</b></div>
+                    <div>• 감가상각으로 증발한 돈: <b className="text-rose-400 font-mono">-{carImpactSummary.depreciationLoss.toLocaleString()}만원</b></div>
+                    <div>• 최종 차량 잔존가치: <b className="text-slate-400 font-mono">{carImpactSummary.finalCarValue.toLocaleString()}만원</b></div>
+                  </div>
+                </div>
+              )}
+
+              {homeImpactSummary && (
+                <div className="p-2.5 rounded-lg bg-sky-950/30 border border-sky-500/30">
+                  <div className="flex items-center gap-1.5 text-sky-300 font-bold mb-1">
+                    <Home className="w-3.5 h-3.5" /> 주택담보대출 이자 청구서
+                  </div>
+                  <div className="text-slate-300 text-[11px] space-y-0.5">
+                    <div>• 매달 나가는 원리금: <b className="text-white font-mono">월 {homeImpactSummary.monthlyMortgage.toLocaleString()}만원</b></div>
+                    <div>• 은행에 낸 총 대출 이자: <b className="text-rose-400 font-mono">약 {homeImpactSummary.totalInterestPaid.toLocaleString()}만원</b></div>
+                    <div>• 최종 부동산 평가액: <b className="text-emerald-400 font-mono">{(homeImpactSummary.finalHomeValue / 10000).toFixed(1)}억원</b></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* 연간 낭비 체감 비교 */}
         <div className="space-y-2">
