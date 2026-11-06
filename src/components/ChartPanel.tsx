@@ -8,7 +8,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
-import { TrendingUp, AlertOctagon } from 'lucide-react';
+import { TrendingUp, AlertOctagon, HelpCircle } from 'lucide-react';
 import type { SimulationResult } from '../types/simulator';
 
 interface ChartPanelProps {
@@ -32,9 +32,12 @@ export const ChartPanel: React.FC<ChartPanelProps> = ({ result }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-800 gap-2">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-base font-semibold text-slate-100 m-0">자산 궤적 시뮬레이션</h2>
+          <div>
+            <h2 className="text-base font-semibold text-slate-100 m-0">자산 궤적 시뮬레이션</h2>
+            <p className="text-xs text-slate-400 mt-0.5">환상(이상) vs 현실 vs 최악의 위기 3중 비교</p>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-xs flex-wrap">
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span> 장밋빛 복리
           </span>
@@ -48,30 +51,45 @@ export const ChartPanel: React.FC<ChartPanelProps> = ({ result }) => {
       </div>
 
       {/* 최종 자산 비교 스탯 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
           <div className="text-[11px] text-slate-400">총 적립 원금</div>
           <div className="text-sm md:text-base font-bold text-slate-200 font-mono mt-0.5">
             {formatKoreanMoney(totalInvestedPrincipal)}
           </div>
+          <div className="text-[10px] text-slate-500 mt-0.5">순수 내가 넣은 돈</div>
         </div>
         <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-800/40">
-          <div className="text-[11px] text-emerald-400">장밋빛 최종 (누수 0)</div>
+          <div className="text-[11px] text-emerald-400">장밋빛 최종 (이상)</div>
           <div className="text-sm md:text-base font-bold text-emerald-300 font-mono mt-0.5">
             {formatKoreanMoney(finalIdeal)}
           </div>
+          <div className="text-[10px] text-emerald-500/80 mt-0.5">누수 0 + 하락장 0일 때</div>
         </div>
         <div className="p-3 rounded-lg bg-sky-950/20 border border-sky-800/40">
           <div className="text-[11px] text-sky-400">현실 지출 반영</div>
           <div className="text-sm md:text-base font-bold text-sky-300 font-mono mt-0.5">
             {formatKoreanMoney(finalNormal)}
           </div>
+          <div className="text-[10px] text-sky-500/80 mt-0.5">OTT/배달 누수 제외 잔고</div>
         </div>
         <div className="p-3 rounded-lg bg-rose-950/30 border border-rose-700/50">
           <div className="text-[11px] text-rose-400 font-semibold">최악의 스트레스 최종</div>
           <div className="text-sm md:text-base font-bold text-rose-300 font-mono mt-0.5">
             {formatKoreanMoney(finalStress)}
           </div>
+          <div className="text-[10px] text-rose-400/80 mt-0.5 font-medium">폭락+실직 충격 후 잔고</div>
+        </div>
+      </div>
+
+      {/* 3개 곡선 직접 해설 배너 */}
+      <div className="mb-4 bg-slate-950/70 p-3 rounded-lg border border-slate-800 text-[11px] text-slate-300 space-y-1">
+        <div className="flex items-center gap-1 font-semibold text-slate-200">
+          <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+          <span>그래프를 읽는 핵심 포인트:</span>
+        </div>
+        <div className="text-slate-400 leading-relaxed">
+          초록 점선과 파란 실선 사이의 격차는 <b>"사소한 구독·배달 지출이 갉아먹은 기회비용"</b>이며, 파란 실선과 빨간 영역 사이의 격차는 <b>"시장 폭락 및 실직 쇼크가 안겨준 심리적 타격"</b>입니다.
         </div>
       </div>
 

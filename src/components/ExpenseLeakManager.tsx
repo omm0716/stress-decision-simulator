@@ -95,16 +95,24 @@ export const ExpenseLeakManager: React.FC<ExpenseLeakManagerProps> = ({ items, o
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
-      <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
         <div className="flex items-center gap-2">
           <Utensils className="w-5 h-5 text-amber-400" />
-          <h2 className="text-base font-semibold text-slate-100 m-0">
-            3. 라이프스타일 누수 커스텀 ({items.filter((i) => i.isActive).length}개 활성)
-          </h2>
+          <div>
+            <h2 className="text-base font-semibold text-slate-100 m-0">
+              3. 라이프스타일 누수 커스텀 ({items.filter((i) => i.isActive).length}개 활성)
+            </h2>
+            <p className="text-[11px] text-slate-400 mt-0.5">매달 야금야금 새어나가는 고정 구독 및 습관 지출</p>
+          </div>
         </div>
         <div className="text-xs px-2.5 py-1 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 font-mono font-bold">
           월 -{totalMonthlyLeak.toFixed(1)}만원 누수
         </div>
+      </div>
+
+      {/* 구독 누수 직접 설명 */}
+      <div className="mb-4 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80 text-[11px] text-slate-400 leading-relaxed">
+        💡 <b>왜 3~4만원짜리 구독료가 무서운가요?</b> 매월 4만원은 1년에 48만원이지만, 10년간 복리(연 8%)로 불어나면 <b>약 730만원의 미래 자산</b>을 갉아먹게 됩니다.
       </div>
 
       {/* 원클릭 프리셋 추가 버튼들 */}

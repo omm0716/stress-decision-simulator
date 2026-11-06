@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import type { SimulatorInputs, ExpenseLeakItem } from './types/simulator';
 import { runStressSimulation } from './utils/engine';
 import { Header } from './components/Header';
+import { GuideBanner } from './components/GuideBanner';
 import { InputPanel } from './components/InputPanel';
 import { ChartPanel } from './components/ChartPanel';
 import { MentalReportCard } from './components/MentalReportCard';
@@ -112,6 +113,9 @@ export default function App() {
 
       {/* 메인 작업 영역 */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8">
+        {/* 상단 3단계 가이드 배너 */}
+        <GuideBanner />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* 좌측: 인풋 & 스트레스 설정 패널 (5 cols) */}
           <section className="lg:col-span-5 space-y-6">
