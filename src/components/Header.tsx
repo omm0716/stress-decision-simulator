@@ -1,0 +1,94 @@
+import React from 'react';
+import { ShieldAlert, Zap } from 'lucide-react';
+import type { SimulatorInputs } from '../types/simulator';
+
+interface HeaderProps {
+  onApplyPreset: (preset: Partial<SimulatorInputs>) => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
+  return (
+    <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 px-4 py-4 md:px-8">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="p-2 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-400">
+              <ShieldAlert className="w-6 h-6" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white m-0">
+                  의사결정 스트레스 테스터
+                </h1>
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                  Stress Decision Sim v1.0
+                </span>
+              </div>
+              <p className="text-xs md:text-sm text-slate-400 mt-0.5">
+                행복회로를 끄고, <span className="text-rose-400 font-medium">최악의 폭락장</span>과 <span className="text-amber-400 font-medium">멘탈 마지노선</span>을 시뮬레이션합니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 프리셋 빠른 선택 */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-xs text-slate-400 mr-1 flex items-center gap-1">
+            <Zap className="w-3.5 h-3.5 text-amber-400" /> 프리셋:
+          </span>
+          <button
+            onClick={() =>
+              onApplyPreset({
+                initialSeed: 500,
+                monthlySavings: 70,
+                targetYears: 5,
+                expectedAnnualReturn: 7,
+                deliveryFrequency: 8,
+                deliveryDefenseRate: 30,
+                annualEmergencyEvents: 2,
+                marketCrashMode: 'moderate',
+              })
+            }
+            className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+          >
+            사회초년생 (시드 500)
+          </button>
+          <button
+            onClick={() =>
+              onApplyPreset({
+                initialSeed: 3000,
+                monthlySavings: 150,
+                targetYears: 10,
+                expectedAnnualReturn: 8,
+                deliveryFrequency: 6,
+                deliveryDefenseRate: 60,
+                annualEmergencyEvents: 3,
+                marketCrashMode: 'blackswan',
+              })
+            }
+            className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+          >
+            안정적 직장인 (시드 3000)
+          </button>
+          <button
+            onClick={() =>
+              onApplyPreset({
+                initialSeed: 10000,
+                monthlySavings: 300,
+                targetYears: 15,
+                expectedAnnualReturn: 9,
+                deliveryFrequency: 4,
+                deliveryDefenseRate: 80,
+                annualEmergencyEvents: 2,
+                marketCrashMode: 'blackswan',
+              })
+            }
+            className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+          >
+            파이어족 도전 (시드 1억)
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+};
