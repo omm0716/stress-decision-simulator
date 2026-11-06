@@ -6,17 +6,27 @@ import { InputPanel } from './components/InputPanel';
 import { ChartPanel } from './components/ChartPanel';
 import { MentalReportCard } from './components/MentalReportCard';
 import { OpportunityCostCard } from './components/OpportunityCostCard';
+import { YearlyDataTable } from './components/YearlyDataTable';
 
 const DEFAULT_INPUTS: SimulatorInputs = {
   initialSeed: 1500, // 1500만원
   monthlySavings: 100, // 100만원
   targetYears: 10,
   expectedAnnualReturn: 8,
+  annualSavingsGrowthRate: 3, // 매년 저축액 3% 증가
+
   deliveryFrequency: 8,
   deliveryCostPerTime: 2.5,
   deliveryDefenseRate: 40,
   annualEmergencyEvents: 2,
   emergencyCostPerEvent: 50,
+
+  // 수입 중단 리얼리티 쇼크 기본 활성화 (3년차에 4개월 실직)
+  enableIncomeShock: true,
+  incomeShockYear: 3,
+  incomeShockDurationMonths: 4,
+  monthlySurvivalExpense: 150,
+
   marketCrashMode: 'moderate',
   inflationRate: 3,
 };
@@ -37,7 +47,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-rose-500 selection:text-white">
-      {/* 고정 상단 네비게이션 & 프리셋 */}
+      {/* 상단 네비게이션 & 프리셋 */}
       <Header onApplyPreset={handleApplyPreset} />
 
       {/* 메인 작업 영역 */}
@@ -48,11 +58,12 @@ export default function App() {
             <InputPanel inputs={inputs} onChange={setInputs} />
           </section>
 
-          {/* 우측: 차트 & 멘탈 리포트 & 기회비용 패널 (7 cols) */}
+          {/* 우측: 차트, 멘탈 리포트, 기회비용, 연도별 상세 테이블 (7 cols) */}
           <section className="lg:col-span-7 space-y-6">
             <ChartPanel result={result} />
             <MentalReportCard result={result} />
             <OpportunityCostCard inputs={inputs} result={result} />
+            <YearlyDataTable result={result} />
           </section>
         </div>
       </main>
@@ -61,10 +72,10 @@ export default function App() {
       <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            의사결정 스트레스 테스터 (Stress Decision Simulator) — 내 기준에 맞춰 뾰족하게 설계된 사이드 프로젝트
+            의사결정 스트레스 테스터 (Stress Decision Simulator) — 현실적 수입 중단 쇼크 & 멘탈 마지노선 점검
           </div>
           <div className="text-[11px] text-slate-600">
-            Client-Side Pure Single Page Application • No Server Required
+            Client-Side Pure Single Page Application • Zero Maintenance
           </div>
         </div>
       </footer>

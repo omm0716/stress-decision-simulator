@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, Flame, Utensils, AlertTriangle, Skull, ShieldCheck } from 'lucide-react';
+import { DollarSign, Flame, Utensils, AlertTriangle, Skull, ShieldCheck, Briefcase } from 'lucide-react';
 import type { SimulatorInputs } from '../types/simulator';
 
 interface InputPanelProps {
@@ -22,11 +22,11 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
 
   return (
     <div className="space-y-6">
-      {/* 1. 기본 자산 목표 */}
+      {/* 1. 기본 투자 계획 */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
         <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800/80">
           <DollarSign className="w-5 h-5 text-emerald-400" />
-          <h2 className="text-base font-semibold text-slate-100 m-0">1. 기본 투자 계획</h2>
+          <h2 className="text-base font-semibold text-slate-100 m-0">1. 기본 투자 & 소득 계획</h2>
         </div>
 
         <div className="space-y-4">
@@ -67,7 +67,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-1">
+          <div className="grid grid-cols-3 gap-2.5 pt-1">
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="text-xs text-slate-400">목표 기간</label>
@@ -98,16 +98,114 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
                 className="w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
               />
             </div>
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-xs text-slate-400">연봉/저축 인상</label>
+                <span className="text-xs font-mono font-bold text-emerald-300">+{inputs.annualSavingsGrowthRate}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                step="1"
+                value={inputs.annualSavingsGrowthRate}
+                onChange={(e) => updateField('annualSavingsGrowthRate', Number(e.target.value))}
+                className="w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 2. 현실 라이프스타일 지출 누수 (Life Friction) */}
+      {/* 2. 돌발 수입 중단 (실직/이직 공백) 리얼리티 쇼크 */}
+      <div className={`border rounded-xl p-5 shadow-lg transition-all ${
+        inputs.enableIncomeShock ? 'bg-amber-950/20 border-amber-500/50' : 'bg-slate-900 border-slate-800'
+      }`}>
+        <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-800/80">
+          <div className="flex items-center gap-2">
+            <Briefcase className={`w-5 h-5 ${inputs.enableIncomeShock ? 'text-amber-400' : 'text-slate-400'}`} />
+            <h2 className="text-base font-semibold text-slate-100 m-0">2. 수입 중단(실직) 리얼리티 쇼크</h2>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={inputs.enableIncomeShock}
+              onChange={(e) => updateField('enableIncomeShock', e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-10 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+          </label>
+        </div>
+
+        {inputs.enableIncomeShock ? (
+          <div className="space-y-4 pt-1">
+            <div className="text-xs text-amber-200/90 leading-relaxed bg-amber-950/40 p-2.5 rounded border border-amber-500/20">
+              ⚠️ 수입이 끊기면 월 저축액이 0원이 될 뿐만 아니라, <b>필수 생존비용을 메우기 위해 투자 자산을 최악의 가격에 강제 매도</b>하게 됩니다.
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-xs text-slate-400">발생 시점</label>
+                  <span className="text-xs font-mono font-bold text-amber-300">{inputs.incomeShockYear}년차</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max={inputs.targetYears}
+                  step="1"
+                  value={Math.min(inputs.incomeShockYear, inputs.targetYears)}
+                  onChange={(e) => updateField('incomeShockYear', Number(e.target.value))}
+                  className="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-xs text-slate-400">무소득 기간</label>
+                  <span className="text-xs font-mono font-bold text-amber-300">{inputs.incomeShockDurationMonths}개월</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="12"
+                  step="1"
+                  value={inputs.incomeShockDurationMonths}
+                  onChange={(e) => updateField('incomeShockDurationMonths', Number(e.target.value))}
+                  className="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-xs text-slate-400">무소득 시 월 필수 생존 생활비</label>
+                <span className="text-xs font-mono font-bold text-rose-400">{inputs.monthlySurvivalExpense} 만원/월 (자산에서 인출)</span>
+              </div>
+              <input
+                type="range"
+                min="50"
+                max="500"
+                step="10"
+                value={inputs.monthlySurvivalExpense}
+                onChange={(e) => updateField('monthlySurvivalExpense', Number(e.target.value))}
+                className="w-full accent-rose-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+              />
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-slate-500 m-0">
+            스위치를 켜면 이직 공백이나 실직으로 인한 수입 중단 충격을 주입할 수 있습니다.
+          </p>
+        )}
+      </div>
+
+      {/* 3. 현실 라이프스타일 지출 누수 (Life Friction) */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800/80">
           <div className="flex items-center gap-2">
             <Utensils className="w-5 h-5 text-amber-400" />
-            <h2 className="text-base font-semibold text-slate-100 m-0">2. 라이프스타일 누수 변수</h2>
+            <h2 className="text-base font-semibold text-slate-100 m-0">3. 라이프스타일 누수 변수</h2>
           </div>
           <span className="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
             월 -{totalLeakMonthly}만원 누수 중
@@ -167,11 +265,11 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
         </div>
       </div>
 
-      {/* 3. 폭락장 스트레스 시나리오 */}
+      {/* 4. 폭락장 스트레스 시나리오 */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
         <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800/80">
           <Flame className="w-5 h-5 text-rose-500" />
-          <h2 className="text-base font-semibold text-slate-100 m-0">3. 시장 폭락 스트레스 모드</h2>
+          <h2 className="text-base font-semibold text-slate-100 m-0">4. 시장 폭락 스트레스 모드</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-2.5">

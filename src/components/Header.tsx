@@ -43,9 +43,14 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 monthlySavings: 70,
                 targetYears: 5,
                 expectedAnnualReturn: 7,
+                annualSavingsGrowthRate: 3,
                 deliveryFrequency: 8,
                 deliveryDefenseRate: 30,
                 annualEmergencyEvents: 2,
+                enableIncomeShock: true,
+                incomeShockYear: 2,
+                incomeShockDurationMonths: 3,
+                monthlySurvivalExpense: 120,
                 marketCrashMode: 'moderate',
               })
             }
@@ -60,9 +65,14 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 monthlySavings: 150,
                 targetYears: 10,
                 expectedAnnualReturn: 8,
+                annualSavingsGrowthRate: 4,
                 deliveryFrequency: 6,
                 deliveryDefenseRate: 60,
                 annualEmergencyEvents: 3,
+                enableIncomeShock: true,
+                incomeShockYear: 4,
+                incomeShockDurationMonths: 4,
+                monthlySurvivalExpense: 180,
                 marketCrashMode: 'blackswan',
               })
             }
@@ -77,9 +87,14 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 monthlySavings: 300,
                 targetYears: 15,
                 expectedAnnualReturn: 9,
+                annualSavingsGrowthRate: 5,
                 deliveryFrequency: 4,
                 deliveryDefenseRate: 80,
                 annualEmergencyEvents: 2,
+                enableIncomeShock: false,
+                incomeShockYear: 5,
+                incomeShockDurationMonths: 6,
+                monthlySurvivalExpense: 250,
                 marketCrashMode: 'blackswan',
               })
             }
