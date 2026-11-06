@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { ExpenseLeakItem, ExpenseCategory } from '../types/simulator';
 import { calculateItemMonthlyLeak } from '../utils/engine';
+import { Term } from './Term';
 
 interface ExpenseLeakManagerProps {
   items: ExpenseLeakItem[];
@@ -316,8 +317,14 @@ export const ExpenseLeakManager: React.FC<ExpenseLeakManagerProps> = ({ items, o
                     <span>
                       기본 발생: {item.period === 'monthly' ? '월' : '연'} {item.frequency}회 × {item.costPerUnit}만원
                     </span>
-                    <span className="text-slate-300 font-mono">
-                      방어율(참아낸 비율): <b className={item.defenseRate >= 50 ? 'text-emerald-400' : 'text-amber-400'}>{item.defenseRate}%</b>
+                    <span className="text-slate-300 font-mono flex items-center gap-1">
+                      <Term
+                        name="방어율"
+                        title="지출 방어율 (절제 성공률)"
+                        description="배달이나 쇼핑 유혹이 왔을 때 지름신을 꾹 참고 통장을 지켜낸 비율입니다."
+                        analogy="10번 유혹 중 4번 참았으면 방어율 40%"
+                      />
+                      : <b className={item.defenseRate >= 50 ? 'text-emerald-400' : 'text-amber-400'}>{item.defenseRate}%</b>
                     </span>
                   </div>
                   <input

@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { TrendingUp, AlertOctagon, HelpCircle } from 'lucide-react';
 import type { SimulationResult } from '../types/simulator';
+import { Term } from './Term';
 
 interface ChartPanelProps {
   result: SimulationResult;
@@ -60,21 +61,42 @@ export const ChartPanel: React.FC<ChartPanelProps> = ({ result }) => {
           <div className="text-[10px] text-slate-500 mt-0.5">순수 내가 넣은 돈</div>
         </div>
         <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-800/40">
-          <div className="text-[11px] text-emerald-400">장밋빛 최종 (이상)</div>
+          <div className="text-[11px] text-emerald-400">
+            <Term
+              name="장밋빛 최종 (이상)"
+              title="장밋빛 복리 잔고"
+              description="지출 누수도 없고 시장 폭락도 전혀 없는, 기존 금융 계산기들이 보여주던 이상적인 환상의 잔고입니다."
+              analogy="날씨 화창하고 신호등이 전부 초록불일 때의 최고 속도"
+            />
+          </div>
           <div className="text-sm md:text-base font-bold text-emerald-300 font-mono mt-0.5">
             {formatKoreanMoney(finalIdeal)}
           </div>
           <div className="text-[10px] text-emerald-500/80 mt-0.5">누수 0 + 하락장 0일 때</div>
         </div>
         <div className="p-3 rounded-lg bg-sky-950/20 border border-sky-800/40">
-          <div className="text-[11px] text-sky-400">현실 지출 반영</div>
+          <div className="text-[11px] text-sky-400">
+            <Term
+              name="현실 지출 반영"
+              title="현실 반영 잔고"
+              description="OTT 구독료, 커피값, 배달비 등 현실의 지출 누수를 빼고 모았을 때의 정직한 잔고입니다."
+              analogy="주유비와 톨게이트비를 지불하고 남은 순수 자산"
+            />
+          </div>
           <div className="text-sm md:text-base font-bold text-sky-300 font-mono mt-0.5">
             {formatKoreanMoney(finalNormal)}
           </div>
           <div className="text-[10px] text-sky-500/80 mt-0.5">OTT/배달 누수 제외 잔고</div>
         </div>
         <div className="p-3 rounded-lg bg-rose-950/30 border border-rose-700/50">
-          <div className="text-[11px] text-rose-400 font-semibold">최악의 스트레스 최종</div>
+          <div className="text-[11px] text-rose-400 font-semibold">
+            <Term
+              name="스트레스 최종 잔고"
+              title="스트레스 잔고 (최후 마지노선)"
+              description="사소한 지출 누수 + 수입 중단(실직) + 시장 폭락까지 겹쳤을 때 내 계좌에 실제로 남아있을 '진짜 마지노선 생존 자금'입니다."
+              analogy="태풍과 폭설이 몰아칠 때 안전하게 살아남는 마지노선"
+            />
+          </div>
           <div className="text-sm md:text-base font-bold text-rose-300 font-mono mt-0.5">
             {formatKoreanMoney(finalStress)}
           </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pizza, Plane, Smartphone, Info } from 'lucide-react';
 import type { SimulationResult } from '../types/simulator';
+import { Term } from './Term';
 
 interface OpportunityCostCardProps {
   result: SimulationResult;
@@ -34,7 +35,15 @@ export const OpportunityCostCard: React.FC<OpportunityCostCardProps> = ({ result
         {/* 누적 기회비용 경고 */}
         <div className="p-3.5 rounded-lg bg-amber-950/20 border border-amber-500/30">
           <div className="text-xs text-amber-300 font-medium mb-1 flex items-center justify-between">
-            <span>💸 OTT·배달·지출 누수로 날아간 미래 복리 자산</span>
+            <span className="flex items-center gap-1">
+              💸{' '}
+              <Term
+                name="증발한 미래 복리 기회비용"
+                title="기회비용 (Opportunity Cost)"
+                description="단순히 내가 쓴 원금뿐 아니라, 그 돈을 쓰지 않고 10년간 복리(연 8%)로 굴렸다면 벌 수 있었던 미래의 진짜 손실 금액입니다."
+                analogy="지금 먹은 2만원짜리 치킨이 10년 뒤 5만원짜리 금송아지가 될 기회를 날린 것"
+              />
+            </span>
             {topCulpritName && (
               <span className="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
                 1위 주범: {topCulpritName} (월 {topCulpritMonthly}만)

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HeartPulse, AlertTriangle, Copy, Check, Sparkles, HelpCircle } from 'lucide-react';
 import type { SimulationResult, MentalRiskLevel } from '../types/simulator';
+import { Term } from './Term';
 
 interface MentalReportCardProps {
   result: SimulationResult;
@@ -80,7 +81,13 @@ export const MentalReportCard: React.FC<MentalReportCardProps> = ({ result }) =>
       {/* 멘탈 위험 점수 게이지 바 */}
       <div className="mb-5">
         <div className="flex justify-between items-center mb-1.5">
-          <span className="text-xs text-slate-400 font-medium">스트레스 붕괴 지수 (높을수록 위험)</span>
+          <span className="text-xs text-slate-400 font-medium">
+            <Term
+              name="스트레스 붕괴 지수"
+              description="하락장의 깊이, 실직 기간, 지출 누수를 종합해 '당신이 공포를 못 이기고 바닥에서 손절(패닉셀)할 확률'을 0~100점으로 측정한 심리적 지표입니다."
+              analogy="지수가 75점 이상이면 하락장에서 밤잠을 설칠 위험이 매우 높음"
+            />
+          </span>
           <span className={`text-sm font-bold font-mono ${styles.text}`}>
             {mentalRisk.score} / 100점
           </span>
@@ -105,7 +112,14 @@ export const MentalReportCard: React.FC<MentalReportCardProps> = ({ result }) =>
       {/* 핵심 스트레스 지표 3종 */}
       <div className="grid grid-cols-3 gap-2.5 mb-3 text-center">
         <div className="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800/80">
-          <div className="text-[10px] text-slate-400">최대 고통 낙폭 (MDD)</div>
+          <div className="text-[10px] text-slate-400">
+            <Term
+              name="최대 낙폭 (MDD)"
+              title="MDD (최대 낙폭)"
+              description="내 계좌가 가장 잘나갈 때 대비 바닥까지 몇 %나 곤두박질치는가를 뜻하는 고통 지수입니다."
+              analogy="롤러코스터의 최대 급강하 깊이 (-30% 넘으면 대부분 공황 발생)"
+            />
+          </div>
           <div className="text-sm font-bold font-mono text-rose-400 mt-0.5">-{maxDrawdownRate}%</div>
           <div className="text-[10px] text-slate-500 font-mono mt-0.5">
             (-{maxDrawdownAmount.toLocaleString()}만원)
@@ -117,7 +131,13 @@ export const MentalReportCard: React.FC<MentalReportCardProps> = ({ result }) =>
           <div className="text-[10px] text-slate-500 mt-0.5">손절 유혹 최대</div>
         </div>
         <div className="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800/80">
-          <div className="text-[10px] text-slate-400">누적 지출 누수</div>
+          <div className="text-[10px] text-slate-400">
+            <Term
+              name="누적 지출 누수"
+              description="배달, OTT, 충동 택시비 등으로 야금야금 사라진 원금의 총합계입니다."
+              analogy="주머니에 난 작은 구멍으로 새어나간 동전들의 총합"
+            />
+          </div>
           <div className="text-sm font-bold font-mono text-sky-400 mt-0.5">
             {totalLeakageAmount.toLocaleString()}만원
           </div>
