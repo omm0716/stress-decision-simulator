@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const GuideBanner: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-xl p-4 shadow-md mb-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-            <HelpCircle className="w-5 h-5" />
+    <div className="steam-panel p-4 mb-6">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded brass-plaque flex-shrink-0">
+            <BookOpen className="w-5 h-5 text-[#f0cf85]" />
           </div>
           <div>
-            <h2 className="text-sm md:text-base font-bold text-slate-100 m-0">
-              처음이신가요? 이 테스터는 이렇게 사용하세요
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#c99738]">
+                OPERATOR&apos;S MANUAL NO. 1
+              </span>
+            </div>
+            <h2 className="text-sm md:text-base font-bold text-[#f7e7ce] m-0">
+              처음이신가요? 증기 압력 시험기 작동 3단계 교범
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              단순 계산기가 아닌, <span className="text-indigo-300 font-medium">내 재정이 최악의 위기(실직+폭락)를 견딜 수 있는지</span> 점검하는 3단계 가이드
+            <p className="text-xs text-[#bfa988] mt-0.5">
+              단순 복리 계산기가 아닌, <span className="text-[#f0cf85] font-semibold">내 자산 보일러가 최악의 고압(실직·폭락·대형지출)에서 폭발하지 않는지</span> 실험하는 장치입니다.
             </p>
           </div>
         </div>
@@ -24,42 +29,42 @@ export const GuideBanner: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="text-xs px-3 py-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/60 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 transition-colors flex-shrink-0"
+          className="text-xs px-3 py-1.5 rounded brass-plaque hover:brightness-110 flex items-center gap-1.5 transition-all flex-shrink-0 cursor-pointer"
         >
-          <span>{isOpen ? '가이드 접기' : '3단계 사용법 보기'}</span>
+          <span>{isOpen ? '교범 접기' : '3단계 작동법 열람'}</span>
           {isOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </button>
       </div>
 
       {isOpen && (
-        <div className="mt-4 pt-4 border-t border-indigo-500/20 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-1">
-            <div className="font-bold text-emerald-400 flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-center leading-4 text-[10px]">1</span>
-              <span>현실적인 소득과 저축 입력</span>
+        <div className="mt-4 pt-4 border-t border-[#5c4524] grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div className="parchment-note p-3 space-y-1">
+            <div className="font-bold text-[#f0cf85] flex items-center gap-1.5 font-mono">
+              <span>[STEP I]</span>
+              <span className="font-sans">기본 석탄 화력(소득·저축) 투입</span>
             </div>
-            <p className="text-slate-400 leading-relaxed text-[11px]">
-              무리한 계획 대신, 현재 시드 머니와 <b>진짜로 매달 남길 수 있는 저축액</b>을 좌측 패널에 입력합니다.
+            <p className="text-[#d8c7ad] leading-relaxed text-[11px]">
+              무리한 장밋빛 계획 대신, 현재 보유한 종잣돈과 <b>매달 실제로 보일러에 넣을 수 있는 저축액</b>을 좌측 레버로 설정합니다.
             </p>
           </div>
 
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-1">
-            <div className="font-bold text-amber-400 flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full bg-amber-500/20 text-center leading-4 text-[10px]">2</span>
-              <span>수입 중단 & 누수 지출 주입</span>
+          <div className="parchment-note p-3 space-y-1">
+            <div className="font-bold text-[#e59849] flex items-center gap-1.5 font-mono">
+              <span>[STEP II]</span>
+              <span className="font-sans">증기 누출 &amp; 연료 중단 위기 주입</span>
             </div>
-            <p className="text-slate-400 leading-relaxed text-[11px]">
-              "이직이나 퇴사로 4개월간 돈이 안 들어오면?", "OTT와 배달비로 새는 돈은?" 등 <b>진짜 현실의 변수</b>를 켭니다.
+            <p className="text-[#d8c7ad] leading-relaxed text-[11px]">
+              "이직·실직으로 연료 공급이 끊기면?", "구독료·배달비·자동차·주택 대출로 증기가 새어나가면?" 등 <b>현실의 압력 변수</b>를 켭니다.
             </p>
           </div>
 
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-1">
-            <div className="font-bold text-rose-400 flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full bg-rose-500/20 text-center leading-4 text-[10px]">3</span>
-              <span>최악의 순간(고점 대비 낙폭) 확인</span>
+          <div className="parchment-note p-3 space-y-1">
+            <div className="font-bold text-[#e05a47] flex items-center gap-1.5 font-mono">
+              <span>[STEP III]</span>
+              <span className="font-sans">보일러 한계 압력(MDD) 및 원장 검열</span>
             </div>
-            <p className="text-slate-400 leading-relaxed text-[11px]">
-              우측 차트의 <b>빨간색 '스트레스 곡선'</b>과 <b>'멘탈 진단서'</b>를 보며, 내가 바닥에서 패닉셀하지 않고 버틸 수 있는지 확인합니다.
+            <p className="text-[#d8c7ad] leading-relaxed text-[11px]">
+              우측 계기판의 <b>붉은색 '스트레스 궤적'</b>과 <b>'멘탈 압력 게이지'</b>를 통해, 바닥에서 패닉셀(폭발)하지 않고 완주할 수 있는지 판별합니다.
             </p>
           </div>
         </div>

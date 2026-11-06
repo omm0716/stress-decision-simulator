@@ -113,24 +113,15 @@ const DEFAULT_INCOME_SHOCKS: IncomeShockEvent[] = [
 ];
 
 const DEFAULT_INPUTS: SimulatorInputs = {
-  initialSeed: 1500, // 1500만원
-  monthlySavings: 100, // 100만원
+  initialSeed: 1500,
+  monthlySavings: 100,
   targetYears: 10,
   expectedAnnualReturn: 8,
   annualSavingsGrowthRate: 3,
-
-  // 현실 커스텀 지출 누수 목록
   expenseLeaks: DEFAULT_EXPENSE_LEAKS,
-
-  // ⚠️ 다중 수입 중단 쇼크 목록
   incomeShocks: DEFAULT_INCOME_SHOCKS,
-
-  // 🚗 대형 지름 1: 자동차 구매
   carPurchase: DEFAULT_CAR_PURCHASE,
-
-  // 🏠 대형 지름 2: 내 집 마련 / 주담대
   homePurchase: DEFAULT_HOME_PURCHASE,
-
   marketCrashMode: 'moderate',
   inflationRate: 3,
 };
@@ -150,22 +141,22 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-rose-500 selection:text-white">
-      {/* 상단 네비게이션 & 프리셋 */}
+    <div className="min-h-screen flex flex-col selection:bg-[#9e7836] selection:text-[#fff]">
+      {/* 상단 황동 계기판 헤더 */}
       <Header onApplyPreset={handleApplyPreset} />
 
-      {/* 메인 작업 영역 */}
+      {/* 메인 기관실 작업 영역 */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8">
-        {/* 상단 3단계 가이드 배너 */}
+        {/* 상단 3단계 작동 교범 배너 */}
         <GuideBanner />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* 좌측: 인풋 & 스트레스 설정 패널 (5 cols) */}
+          {/* 좌측: 5개 증기 밸브 & 압력 조절 패널 (5 cols) */}
           <section className="lg:col-span-5 space-y-6">
             <InputPanel inputs={inputs} onChange={setInputs} />
           </section>
 
-          {/* 우측: 차트, 멘탈 리포트, 기회비용, 연도별 상세 테이블 (7 cols) */}
+          {/* 우측: 압력 기록계, 보일러 감정서, 기회비용 청구서, 복식부기 원장 (7 cols) */}
           <section className="lg:col-span-7 space-y-6">
             <ChartPanel result={result} />
             <MentalReportCard result={result} />
@@ -175,14 +166,14 @@ export default function App() {
         </div>
       </main>
 
-      {/* 하단 푸터 */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      {/* 하단 주철 명판 푸터 */}
+      <footer className="border-t-2 border-[#5c4524] bg-[#110d0a] py-6 text-center text-xs text-[#9c8669]">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
           <div>
-            의사결정 스트레스 테스터 (Stress Decision Simulator) — 현실적 OTT·구독 누수 & 수입 중단 쇼크 모델링
+            ⚙ IMPERIAL DECISION STRESS APPARATUS (EST. 1889) — 19세기 산업혁명 보일러 압력 &amp; 회계 원장 에디션
           </div>
-          <div className="text-[11px] text-slate-600">
-            Client-Side Pure Single Page Application • Zero Maintenance
+          <div className="text-[11px] text-[#7a6852]">
+            CAST-IRON &amp; BRASS MECHANICAL ENGINE • ZERO SERVER DEPENDENCY
           </div>
         </div>
       </footer>

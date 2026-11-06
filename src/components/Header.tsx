@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, Zap } from 'lucide-react';
+import { Cog, Gauge, Flame } from 'lucide-react';
 import type { SimulatorInputs } from '../types/simulator';
 
 interface HeaderProps {
@@ -8,35 +8,44 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
   return (
-    <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 px-4 py-4 md:px-8">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-400">
-              <ShieldAlert className="w-6 h-6" />
-            </span>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white m-0">
-                  의사결정 스트레스 테스터
-                </h1>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                  Stress Decision Sim v1.0
-                </span>
-              </div>
-              <p className="text-xs md:text-sm text-slate-400 mt-0.5">
-                행복회로를 끄고, <span className="text-rose-400 font-medium">최악의 폭락장</span>과 <span className="text-amber-400 font-medium">멘탈 마지노선</span>을 시뮬레이션합니다.
-              </p>
+    <header className="border-b-2 border-[#785a28] bg-[#17120e]/95 backdrop-blur-md sticky top-0 z-30 shadow-2xl">
+      {/* 상단 황동 각인 스트립 */}
+      <div className="bg-gradient-to-r from-[#261c12] via-[#3d2d19] to-[#261c12] border-b border-[#5c4524] py-1 px-4 text-center">
+        <span className="text-[10px] tracking-[0.22em] uppercase font-mono text-[#d4af37]/90">
+          ⚙ IMPERIAL CAPITAL &amp; STEAM PRESSURE APPARATUS • EST. 1889 • PATENT NO. IV-889 ⚙
+        </span>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-3.5 md:px-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          {/* 황동 기어 엠블럼 */}
+          <div className="relative p-2.5 rounded brass-plaque flex items-center justify-center">
+            <Cog className="w-7 h-7 text-[#f0cf85] animate-[spin_24s_linear_infinite]" />
+            <Flame className="w-3.5 h-3.5 text-[#e0533c] absolute" />
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl md:text-2xl font-bold tracking-wide text-[#f7e7ce] m-0 drop-shadow">
+                의사결정 스트레스 시험기
+              </h1>
+              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded brass-plaque">
+                1889 INDUSTRIAL EDITION
+              </span>
             </div>
+            <p className="text-xs text-[#bfa988] mt-0.5">
+              장밋빛 행복회로 증기를 빼고, <span className="text-[#e05a47] font-semibold">최악의 보일러 폭발 압력(폭락·실직·대형지출)</span>과 <span className="text-[#f0cf85] font-semibold">멘탈 마지노선</span>을 계측합니다.
+            </p>
           </div>
         </div>
 
-        {/* 프리셋 빠른 선택 */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs text-slate-400 mr-1 flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-amber-400" /> 프리셋:
+        {/* 기계식 프리셋 레버 버튼 */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-[#d4af37] mr-1 flex items-center gap-1 font-mono">
+            <Gauge className="w-3.5 h-3.5" /> 표준 계측 규격:
           </span>
           <button
+            type="button"
             onClick={() =>
               onApplyPreset({
                 initialSeed: 500,
@@ -76,11 +85,12 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 marketCrashMode: 'moderate',
               })
             }
-            className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+            className="text-xs px-3 py-1.5 rounded brass-plaque hover:brightness-110 transition-all cursor-pointer font-medium"
           >
-            사회초년생 (시드 500+아반떼)
+            ⚙ 견습 기술자 (시드 500+아반떼)
           </button>
           <button
+            type="button"
             onClick={() =>
               onApplyPreset({
                 initialSeed: 3000,
@@ -128,11 +138,12 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 marketCrashMode: 'blackswan',
               })
             }
-            className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+            className="text-xs px-3 py-1.5 rounded brass-plaque hover:brightness-110 transition-all cursor-pointer font-medium"
           >
-            영끌 직장인 (그랜저+수도권 6.5억)
+            ⚙ 영끌 공장장 (그랜저+수도권 6.5억)
           </button>
           <button
+            type="button"
             onClick={() =>
               onApplyPreset({
                 initialSeed: 10000,
@@ -163,9 +174,9 @@ export const Header: React.FC<HeaderProps> = ({ onApplyPreset }) => {
                 marketCrashMode: 'blackswan',
               })
             }
-            className="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+            className="text-xs px-3 py-1.5 rounded brass-plaque hover:brightness-110 transition-all cursor-pointer font-medium"
           >
-            파이어족 도전 (무차량·무대출 풀투자)
+            ⚙ 대자본가 (무차량·무대출 풀투자)
           </button>
         </div>
       </div>

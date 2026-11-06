@@ -1,7 +1,131 @@
 @import "tailwindcss";
 
 @layer base {
-  body {
-    @apply bg-slate-950 text-slate-100 font-sans antialiased min-h-screen selection:bg-rose-500 selection:text-white;
+  :root {
+    --font-serif-kr: 'Noto Serif KR', Georgia, serif;
+    --font-display: 'Cinzel', 'Noto Serif KR', serif;
+    --font-mono-mech: 'IBM Plex Mono', Consolas, monospace;
   }
+
+  body {
+    font-family: var(--font-serif-kr);
+    background-color: #130f0c;
+    color: #efe4cf;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 50% 0%, rgba(196, 132, 45, 0.14) 0%, transparent 60%),
+      radial-gradient(circle at 85% 80%, rgba(168, 50, 32, 0.1) 0%, transparent 50%),
+      linear-gradient(rgba(184, 134, 45, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184, 134, 45, 0.04) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, .font-victorian {
+    font-family: var(--font-display);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono-mech);
+  }
+}
+
+/* 19세기 주철 & 황동 계기판 패널 */
+.steam-panel {
+  position: relative;
+  background: linear-gradient(165deg, #211a15 0%, #16110e 100%);
+  border: 2px solid #6b5129;
+  box-shadow:
+    inset 0 0 0 1px rgba(212, 175, 55, 0.18),
+    inset 0 2px 12px rgba(0, 0, 0, 0.65),
+    0 10px 25px -5px rgba(0, 0, 0, 0.8);
+  border-radius: 6px;
+}
+
+/* 모서리 황동 리벳 장식 효과 */
+.steam-panel::before {
+  content: '•';
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  color: #8c6a32;
+  font-size: 12px;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 1px 1px #000;
+}
+
+.steam-panel::after {
+  content: '•';
+  position: absolute;
+  top: 3px;
+  right: 7px;
+  color: #8c6a32;
+  font-size: 12px;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 1px 1px #000;
+}
+
+/* 양피지 / 고서 회계 원장 안내 박스 */
+.parchment-note {
+  background: linear-gradient(180deg, rgba(46, 36, 26, 0.9) 0%, rgba(33, 25, 18, 0.95) 100%);
+  border: 1px solid #5c4524;
+  border-left: 3px solid #c99738;
+  color: #dccbb1;
+  border-radius: 4px;
+}
+
+/* 황동 명판 배지 */
+.brass-plaque {
+  background: linear-gradient(180deg, #3a2a16 0%, #24190c 100%);
+  border: 1px solid #9e7836;
+  color: #f0cf85;
+  box-shadow: inset 0 1px 0 rgba(255, 223, 140, 0.25), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* 기계식 레버 슬라이더 커스텀 */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #0d0a08;
+  border: 1px solid #4d3a1f;
+  height: 8px;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 20px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #e5be67 0%, #9b7226 50%, #634614 100%);
+  border: 1px solid #f7dfa5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+  filter: brightness(1.15);
+}
+
+/* 커스텀 스크롤바 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #120e0b;
+  border: 1px solid #332616;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #785a28, #4d3817);
+  border: 1px solid #9e7836;
+  border-radius: 2px;
 }

@@ -77,122 +77,122 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-        <div className="flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-amber-400" />
+    <div className="steam-panel p-5 space-y-4">
+      <div className="flex items-center justify-between pb-2.5 border-b border-[#5c4524]">
+        <div className="flex items-center gap-2.5">
+          <Briefcase className="w-5 h-5 text-[#e59849]" />
           <div>
-            <h2 className="text-base font-semibold text-slate-100 m-0">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[#e59849] block">
+              VALVE NO. II — FUEL INTERRUPTIONS
+            </span>
+            <h2 className="text-base font-bold text-[#f7e7ce] m-0">
               2.{' '}
               <Term
                 name="수입 중단(실직/이직) 다중 쇼크"
-                title="수입 중단 다중 쇼크"
-                description="이직 공백이나 권고사직 등으로 월급이 끊겼을 때 저축 0원은 물론, 필수 생활비를 위해 주식을 바닥 가격에 헐값 매도하게 되는 현실적 위기입니다."
-                analogy="엔진이 꺼진 비행기가 비상 활주로를 찾을 때까지 고도를 잃는 상황"
+                title="연료 공급 중단 (실직/이직 쇼크)"
+                description="이직 공백이나 권고사직 등으로 월급(석탄 공급)이 끊겼을 때 저축 0원은 물론, 필수 생계비를 위해 자산을 바닥 가격에 헐값 매도하게 되는 현실적 위기입니다."
+                analogy="석탄 공급이 끊긴 증기기관차가 객차의 목재를 뜯어 화실에 태우는 비상 상황"
               />
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              10~20년 동안 2~3회 찾아올 수 있는 현실적 소득 절벽 시뮬레이션
-            </p>
           </div>
         </div>
-        <span className="text-xs px-2.5 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono font-bold">
-          {activeCount}개 위기 활성
+        <span className="text-xs px-2.5 py-1 rounded bg-[#2e1f12] text-[#f0cf85] border border-[#8c6a32] font-mono font-bold">
+          {activeCount}개 위기 가동
         </span>
       </div>
 
-      {/* 직접 설명 박스 */}
-      <div className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80 text-[11px] text-slate-400 leading-relaxed flex items-start gap-2">
-        <HelpCircle className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+      {/* 양피지 설명 */}
+      <div className="parchment-note p-2.5 text-[11px] leading-relaxed flex items-start gap-2">
+        <HelpCircle className="w-3.5 h-3.5 text-[#f0cf85] mt-0.5 flex-shrink-0" />
         <span>
-          <b>살면서 실직이 한 번만 올까요?</b> 이직 공백, 권고사직, 번아웃 안식년 등 커리어 동안 수입이 뚝 끊기는 구간은 여러 번 발생합니다. 아래에서 자유롭게 위기 이벤트를 추가해 보세요.
+          <b>살면서 실직이 한 번만 올까요?</b> 이직 공백, 구조조정, 번아웃 안식년 등 생애 주기 동안 연료 공급이 끊기는 구간은 여러 번 찾아옵니다. 아래에서 다중 위기를 자유롭게 추가해 보세요.
         </span>
       </div>
 
       {/* 빠른 프리셋 추가 버튼 */}
       <div>
-        <div className="text-[11px] text-slate-400 mb-2 flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" /> 빠른 추가 프리셋:
+        <div className="text-[11px] text-[#bfa988] mb-2 flex items-center gap-1">
+          <Sparkles className="w-3.5 h-3.5 text-[#f0cf85]" /> 빠른 위기 주입 레버:
         </div>
         <div className="flex flex-wrap gap-1.5">
           <button
             type="button"
             onClick={() => handleAddPreset('1차 이직 공백', 2, 3, 150)}
-            className="text-[11px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-colors"
+            className="text-[11px] px-2.5 py-1 rounded bg-[#261c12] hover:bg-[#362819] text-[#f0cf85] border border-[#785a28] transition-colors cursor-pointer"
           >
             + 2년차 이직 공백 (3개월)
           </button>
           <button
             type="button"
             onClick={() => handleAddPreset('구조조정/희망퇴직', 5, 5, 180)}
-            className="text-[11px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 transition-colors"
+            className="text-[11px] px-2.5 py-1 rounded bg-[#2b1814] hover:bg-[#3d211b] text-[#ff9e8a] border border-[#8f3d2f] transition-colors cursor-pointer"
           >
             + 5년차 권고사직 (5개월)
           </button>
           <button
             type="button"
             onClick={() => handleAddPreset('번아웃 안식년/갭이어', 8, 6, 200)}
-            className="text-[11px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 border border-sky-500/30 transition-colors"
+            className="text-[11px] px-2.5 py-1 rounded bg-[#1a2421] hover:bg-[#24332e] text-[#8cd4b5] border border-[#456e5d] transition-colors cursor-pointer"
           >
             + 8년차 안식년 (6개월)
           </button>
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="text-[11px] px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1 transition-colors"
+            className="text-[11px] px-2.5 py-1 rounded brass-plaque hover:brightness-110 flex items-center gap-1 transition-all cursor-pointer font-semibold"
           >
-            <Plus className="w-3 h-3" /> 직접 추가
+            <Plus className="w-3 h-3" /> 직접 기입
           </button>
         </div>
       </div>
 
       {/* 직접 입력 폼 */}
       {showAddForm && (
-        <form onSubmit={handleCustomAdd} className="bg-slate-950/70 p-3.5 rounded-lg border border-indigo-500/40 space-y-3 text-xs">
-          <div className="flex justify-between items-center font-semibold text-indigo-300">
-            <span>새 실직/수입 중단 위기 추가</span>
-            <button type="button" onClick={() => setShowAddForm(false)} className="text-slate-400 hover:text-white">✕</button>
+        <form onSubmit={handleCustomAdd} className="bg-[#140f0c] p-3.5 rounded border border-[#9e7836] space-y-3 text-xs">
+          <div className="flex justify-between items-center font-bold text-[#f0cf85]">
+            <span>⚙ 신규 수입 중단 위기 장부 기입</span>
+            <button type="button" onClick={() => setShowAddForm(false)} className="text-[#bfa988] hover:text-white cursor-pointer">✕</button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[11px] text-slate-400 block mb-1">위기 이름</label>
+              <label className="text-[11px] text-[#bfa988] block mb-1">위기 명칭</label>
               <input
                 type="text"
-                placeholder="예: 2차 이직 준비, 스타트업 폐업"
+                placeholder="예: 2차 이직 준비, 공장 휴업"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                className="w-full bg-[#1f1812] border border-[#5c4524] rounded px-2.5 py-1.5 text-[#f7e7ce]"
                 required
               />
             </div>
             <div>
-              <label className="text-[11px] text-slate-400 block mb-1">발생 시점 (년차)</label>
+              <label className="text-[11px] text-[#bfa988] block mb-1">발생 시점 (년차)</label>
               <input
                 type="number"
                 min="1"
                 max={targetYears}
                 value={newYear}
                 onChange={(e) => setNewYear(Number(e.target.value))}
-                className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                className="w-full bg-[#1f1812] border border-[#5c4524] rounded px-2.5 py-1.5 text-[#f7e7ce]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[11px] text-slate-400 block mb-1">중단 기간 (개월)</label>
+              <label className="text-[11px] text-[#bfa988] block mb-1">중단 기간 (개월)</label>
               <input
                 type="number"
                 min="1"
                 max="12"
                 value={newMonths}
                 onChange={(e) => setNewMonths(Number(e.target.value))}
-                className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                className="w-full bg-[#1f1812] border border-[#5c4524] rounded px-2.5 py-1.5 text-[#f7e7ce]"
               />
             </div>
             <div>
-              <label className="text-[11px] text-slate-400 block mb-1">월 필수 생활비 (만원, 자산 인출)</label>
+              <label className="text-[11px] text-[#bfa988] block mb-1">월 필수 생존비 (만원)</label>
               <input
                 type="number"
                 min="50"
@@ -200,16 +200,16 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
                 step="10"
                 value={newExpense}
                 onChange={(e) => setNewExpense(Number(e.target.value))}
-                className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-white"
+                className="w-full bg-[#1f1812] border border-[#5c4524] rounded px-2.5 py-1.5 text-[#f7e7ce]"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-semibold flex items-center justify-center gap-1 transition-colors"
+            className="w-full py-1.5 rounded brass-plaque hover:brightness-110 font-bold flex items-center justify-center gap-1 transition-all cursor-pointer"
           >
-            <Check className="w-3.5 h-3.5" /> 위기 이벤트 등록
+            <Check className="w-3.5 h-3.5" /> 장부에 위기 추가
           </button>
         </form>
       )}
@@ -217,17 +217,17 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
       {/* 수입 중단 이벤트 목록 */}
       <div className="space-y-2.5">
         {shocks.length === 0 ? (
-          <div className="text-center py-4 text-xs text-slate-500 bg-slate-950/30 rounded border border-dashed border-slate-800">
-            등록된 수입 중단 위기가 없습니다. 위의 프리셋 버튼으로 추가해 보세요.
+          <div className="text-center py-4 text-xs text-[#8c765a] bg-[#140f0c]/60 rounded border border-dashed border-[#4d3a1f]">
+            등록된 수입 중단 위기가 없습니다. 위의 레버 버튼으로 위기를 추가해 보세요.
           </div>
         ) : (
           shocks.map((shock) => (
             <div
               key={shock.id}
-              className={`p-3 rounded-lg border transition-all ${
+              className={`p-3 rounded border transition-all ${
                 shock.isActive
-                  ? 'bg-amber-950/20 border-amber-500/40'
-                  : 'bg-slate-950/20 border-slate-900 opacity-50'
+                  ? 'bg-[#261b12]/90 border-[#8c6a32]'
+                  : 'bg-[#140f0c]/40 border-[#332616] opacity-50'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -236,22 +236,22 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
                     type="checkbox"
                     checked={shock.isActive}
                     onChange={() => toggleShock(shock.id)}
-                    className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+                    className="w-4 h-4 accent-[#d4af37] rounded cursor-pointer"
                   />
-                  <span className="text-xs font-bold text-slate-200">{shock.name}</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">
+                  <span className="text-xs font-bold text-[#f7e7ce]">{shock.name}</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#3a2a16] text-[#f0cf85] border border-[#785a28] font-mono">
                     {shock.year}년차
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-rose-400">
+                  <span className="text-xs font-mono font-bold text-[#e05a47]">
                     {shock.isActive ? `${shock.durationMonths}개월 무소득 (-${shock.monthlySurvivalExpense}만/월)` : 'OFF'}
                   </span>
                   <button
                     type="button"
                     onClick={() => removeShock(shock.id)}
-                    className="text-slate-500 hover:text-rose-400 transition-colors p-1"
+                    className="text-[#8c765a] hover:text-[#e05a47] transition-colors p-1 cursor-pointer"
                     title="삭제"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -260,11 +260,11 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
               </div>
 
               {shock.isActive && (
-                <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-800/60 text-xs">
+                <div className="grid grid-cols-3 gap-2.5 pt-2 border-t border-[#4d3a1f] text-xs">
                   <div>
-                    <div className="flex justify-between text-[11px] text-slate-400 mb-0.5">
+                    <div className="flex justify-between text-[11px] text-[#bfa988] mb-1">
                       <span>발생 시점</span>
-                      <span className="font-mono text-amber-300">{shock.year}년차</span>
+                      <span className="font-mono text-[#f0cf85]">{shock.year}년차</span>
                     </div>
                     <input
                       type="range"
@@ -272,14 +272,14 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
                       max={targetYears}
                       value={Math.min(shock.year, targetYears)}
                       onChange={(e) => updateField(shock.id, 'year', Number(e.target.value))}
-                      className="w-full accent-amber-500 bg-slate-800 h-1.5 rounded cursor-pointer"
+                      className="w-full cursor-pointer"
                     />
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-[11px] text-slate-400 mb-0.5">
+                    <div className="flex justify-between text-[11px] text-[#bfa988] mb-1">
                       <span>중단 기간</span>
-                      <span className="font-mono text-amber-300">{shock.durationMonths}개월</span>
+                      <span className="font-mono text-[#f0cf85]">{shock.durationMonths}개월</span>
                     </div>
                     <input
                       type="range"
@@ -287,14 +287,14 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
                       max="12"
                       value={shock.durationMonths}
                       onChange={(e) => updateField(shock.id, 'durationMonths', Number(e.target.value))}
-                      className="w-full accent-amber-500 bg-slate-800 h-1.5 rounded cursor-pointer"
+                      className="w-full cursor-pointer"
                     />
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-[11px] text-slate-400 mb-0.5">
+                    <div className="flex justify-between text-[11px] text-[#bfa988] mb-1">
                       <span>월 생존비용</span>
-                      <span className="font-mono text-rose-400">{shock.monthlySurvivalExpense}만원</span>
+                      <span className="font-mono text-[#e05a47]">{shock.monthlySurvivalExpense}만원</span>
                     </div>
                     <input
                       type="range"
@@ -303,7 +303,7 @@ export const IncomeShockManager: React.FC<IncomeShockManagerProps> = ({
                       step="10"
                       value={shock.monthlySurvivalExpense}
                       onChange={(e) => updateField(shock.id, 'monthlySurvivalExpense', Number(e.target.value))}
-                      className="w-full accent-rose-500 bg-slate-800 h-1.5 rounded cursor-pointer"
+                      className="w-full cursor-pointer"
                     />
                   </div>
                 </div>
