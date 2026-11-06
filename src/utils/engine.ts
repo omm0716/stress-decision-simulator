@@ -1,4 +1,13 @@
-import type { SimulatorInputs, SimulationResult, YearSimulationPoint, MentalRiskLevel } from '../types/simulator';
+import type { SimulatorInputs, SimulationResult, YearSimulationPoint, MentalRiskLevel, ExpenseLeakItem } from '../types/simulator';
+
+export function calculateItemMonthlyLeak(item: ExpenseLeakItem): number {
+  if (!item.isActive) return 0;
+  const netRatio = Math.max(0, 1 - item.defenseRate / 100);
+  if (item.period === 'monthly') {
+    return item.frequency * item.costPerUnit * netRatio;
+  }
+  return (item.frequency * item.costPerUnit * netRatio) / 12;
+}
 
 export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
   const {
@@ -7,11 +16,7 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
     targetYears,
     expectedAnnualReturn,
     annualSavingsGrowthRate,
-    deliveryFrequency,
-    deliveryCostPerTime,
-    deliveryDefenseRate,
-    annualEmergencyEvents,
-    emergencyCostPerEvent,
+    expenseLeaks,
     enableIncomeShock,
     incomeShockYear,
     incomeShockDurationMonths,
@@ -21,10 +26,19 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
 
   const monthlyReturnRate = Math.pow(1 + expectedAnnualReturn / 100, 1 / 12) - 1;
   
-  // 월간 지출 누수 계산 (만원)
-  const monthlyDeliveryLeak = deliveryFrequency * (1 - deliveryDefenseRate / 100) * deliveryCostPerTime;
-  const monthlyEmergencyLeak = (annualEmergencyEvents * emergencyCostPerEvent) / 12;
-  const totalMonthlyLeak = monthlyDeliveryLeak + monthlyEmergencyLeak;
+  // 동적 누수 지출 목록 합산 (만원)
+  let totalMonthlyLeak = 0;
+  let topCulpritName = '';
+  let topCulpritMonthly = 0;
+
+  expenseLeaks.forEach((item) => {
+    const leak = calculateItemMonthlyLeak(item);
+    totalMonthlyLeak += leak;
+    if (leak > topCulpritMonthly) {
+      topCulpritMonthly = leak;
+      topCulpritName = item.name;
+    }
+  });
 
   const timeline: YearSimulationPoint[] = [];
 
@@ -90,7 +104,6 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
       // 스트레스 모델: 실직 월에는 저축 0원 + 생활비 역인출(강제 헐값 매도!)
       const isShockMonth = isShockYear && m < shockMonths;
       if (isShockMonth) {
-        // 수입이 끊겨 필수 생활비를 주식/투자금에서 강제 매도 인출
         stressBal = Math.max(0, stressBal - monthlySurvivalExpense) * (1 + monthlyReturnRate);
       } else {
         stressBal = (stressBal + effectiveMonthlyNormal) * (1 + monthlyReturnRate);
@@ -151,18 +164,24 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
   let level: MentalRiskLevel = 'SAFE';
   let title = '강철 멘탈 요새형';
   let description = '충격이 와도 흔들리지 않는 안정적인 현금흐름과 자산 방어선을 갖추고 있습니다.';
+  
   let prescription = '현재 페이스를 유지하되, 하락장에서 저가 매수할 수 있는 현금 비중 10%만 상시 유지하세요.';
+  if (topCulpritName) {
+    prescription = `현재 1위 지출 구멍인 '${topCulpritName}'(월 ${topCulpritMonthly.toFixed(1)}만원)의 방어율을 조금만 더 높여 비상금 풀을 확보하세요.`;
+  }
 
   if (totalMentalScore >= 75) {
     level = 'MELTDOWN';
     title = '멘탈 마지노선 붕괴 위험 (Panic Sell 경보)';
     description = `하락장과 수입 중단이 겹치는 구간에서 최고점 대비 -${Math.round(maxDrawdownRate)}%(-${Math.round(maxDrawdownAmount).toLocaleString()}만원)가 증발하고 생활비 때문에 주식을 바닥에서 강제 매도할 확률이 95% 이상입니다.`;
-    prescription = `반드시 ${incomeShockDurationMonths || 6}개월 이상의 필수 생활비(${((incomeShockDurationMonths || 6) * monthlySurvivalExpense).toLocaleString()}만원)를 파킹통장(CMA)에 현금으로 격리해두어야 합니다.`;
+    prescription = `반드시 ${incomeShockDurationMonths || 6}개월 이상의 필수 생활비(${((incomeShockDurationMonths || 6) * monthlySurvivalExpense).toLocaleString()}만원)를 파킹통장에 격리해두고, '${topCulpritName}' 등의 불필요한 누수를 즉시 차단해야 합니다.`;
   } else if (totalMentalScore >= 50) {
     level = 'PANIC';
     title = '수면 장애 및 패닉 경계형';
     description = `자산이 크게 꺾이는 ${worstYear}년차 구간에서 계좌를 열어볼 때마다 극심한 스트레스와 현금 유동성 압박이 발생합니다.`;
-    prescription = `배달/외식 방어율을 높이고, 무소득 구간을 버틸 수 있는 부업이나 비상 파이프라인을 점검하세요.`;
+    prescription = topCulpritName
+      ? `'${topCulpritName}'(월 ${topCulpritMonthly.toFixed(1)}만원) 등 누수 지출을 통제하고, 무소득 구간을 버틸 수 있는 안전자산 비중을 늘리세요.`
+      : '월 누수 지출을 통제하고, 무소득 구간을 버틸 수 있는 안전자산 비중을 늘리세요.';
   } else if (totalMentalScore >= 25) {
     level = 'CAUTION';
     title = '가벼운 심장 쫄깃형';
@@ -177,6 +196,9 @@ export function runStressSimulation(inputs: SimulatorInputs): SimulationResult {
     finalStress: Math.round(stressBal),
     totalInvestedPrincipal: Math.round(cumulativeInvested),
     totalLeakageAmount: Math.round(cumulativeLeak),
+    totalMonthlyLeak: Math.round(totalMonthlyLeak * 10) / 10,
+    topCulpritName,
+    topCulpritMonthly: Math.round(topCulpritMonthly * 10) / 10,
     maxDrawdownRate: Math.round(maxDrawdownRate * 10) / 10,
     maxDrawdownAmount: Math.round(maxDrawdownAmount),
     worstYear,

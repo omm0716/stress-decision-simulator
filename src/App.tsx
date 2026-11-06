@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { SimulatorInputs } from './types/simulator';
+import type { SimulatorInputs, ExpenseLeakItem } from './types/simulator';
 import { runStressSimulation } from './utils/engine';
 import { Header } from './components/Header';
 import { InputPanel } from './components/InputPanel';
@@ -8,20 +8,80 @@ import { MentalReportCard } from './components/MentalReportCard';
 import { OpportunityCostCard } from './components/OpportunityCostCard';
 import { YearlyDataTable } from './components/YearlyDataTable';
 
+const DEFAULT_EXPENSE_LEAKS: ExpenseLeakItem[] = [
+  {
+    id: 'leak-delivery',
+    name: '배달음식 & 야식',
+    category: 'habit',
+    period: 'monthly',
+    frequency: 8,
+    costPerUnit: 2.5,
+    defenseRate: 40,
+    isActive: true,
+  },
+  {
+    id: 'leak-ott',
+    name: 'OTT & 디지털 구독 (넷플/유튜브/쿠팡)',
+    category: 'subscription',
+    period: 'monthly',
+    frequency: 1,
+    costPerUnit: 3.5,
+    defenseRate: 0,
+    isActive: true,
+  },
+  {
+    id: 'leak-coffee',
+    name: '카페 & 테이크아웃 커피',
+    category: 'habit',
+    period: 'monthly',
+    frequency: 16,
+    costPerUnit: 0.5,
+    defenseRate: 25,
+    isActive: true,
+  },
+  {
+    id: 'leak-game',
+    name: '게임 월정액/패스/가챠',
+    category: 'subscription',
+    period: 'monthly',
+    frequency: 1,
+    costPerUnit: 5.0,
+    defenseRate: 20,
+    isActive: true,
+  },
+  {
+    id: 'leak-taxi',
+    name: '심야 택시 & 카카오T',
+    category: 'habit',
+    period: 'monthly',
+    frequency: 2,
+    costPerUnit: 2.5,
+    defenseRate: 20,
+    isActive: true,
+  },
+  {
+    id: 'leak-emergency',
+    name: '연간 경조사/명절/치과 돌발 지출',
+    category: 'emergency',
+    period: 'yearly',
+    frequency: 2,
+    costPerUnit: 50.0,
+    defenseRate: 0,
+    isActive: true,
+  },
+];
+
 const DEFAULT_INPUTS: SimulatorInputs = {
   initialSeed: 1500, // 1500만원
   monthlySavings: 100, // 100만원
   targetYears: 10,
   expectedAnnualReturn: 8,
-  annualSavingsGrowthRate: 3, // 매년 저축액 3% 증가
+  annualSavingsGrowthRate: 3,
 
-  deliveryFrequency: 8,
-  deliveryCostPerTime: 2.5,
-  deliveryDefenseRate: 40,
-  annualEmergencyEvents: 2,
-  emergencyCostPerEvent: 50,
+  // 현실 커스텀 지출 누수 목록
+  expenseLeaks: DEFAULT_EXPENSE_LEAKS,
 
-  // 수입 중단 리얼리티 쇼크 기본 활성화 (3년차에 4개월 실직)
+  // 수입 중단 리얼리티 쇼크 (3년차 4개월 실직)
   enableIncomeShock: true,
   incomeShockYear: 3,
   incomeShockDurationMonths: 4,
@@ -62,7 +122,7 @@ export default function App() {
           <section className="lg:col-span-7 space-y-6">
             <ChartPanel result={result} />
             <MentalReportCard result={result} />
-            <OpportunityCostCard inputs={inputs} result={result} />
+            <OpportunityCostCard result={result} />
             <YearlyDataTable result={result} />
           </section>
         </div>
@@ -72,7 +132,7 @@ export default function App() {
       <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            의사결정 스트레스 테스터 (Stress Decision Simulator) — 현실적 수입 중단 쇼크 & 멘탈 마지노선 점검
+            의사결정 스트레스 테스터 (Stress Decision Simulator) — 현실적 OTT·구독 누수 & 수입 중단 쇼크 모델링
           </div>
           <div className="text-[11px] text-slate-600">
             Client-Side Pure Single Page Application • Zero Maintenance

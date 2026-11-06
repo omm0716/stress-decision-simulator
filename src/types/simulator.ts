@@ -1,5 +1,18 @@
 export type MarketCrashMode = 'none' | 'moderate' | 'blackswan';
 
+export type ExpenseCategory = 'subscription' | 'habit' | 'emergency' | 'custom';
+
+export interface ExpenseLeakItem {
+  id: string;
+  name: string; // 예: 'OTT & 디지털 구독', '배달음식 & 야식', '게임 패스/과금'
+  category: ExpenseCategory;
+  period: 'monthly' | 'yearly'; // 월간 주기 vs 연간 돌발
+  frequency: number; // 주기 내 발생 횟수
+  costPerUnit: number; // 1회/1개월당 비용 (만원)
+  defenseRate: number; // 방어/절제율 (%, 0~100)
+  isActive: boolean; // 활성화 여부
+}
+
 export interface SimulatorInputs {
   initialSeed: number; // 만원 (예: 1000 = 10,000,000원)
   monthlySavings: number; // 만원 (예: 100 = 1,000,000원)
@@ -7,13 +20,8 @@ export interface SimulatorInputs {
   expectedAnnualReturn: number; // % (예: 8)
   annualSavingsGrowthRate: number; // 연간 저축액 증가율 (연봉 인상률 반영 %, 기본 3%)
 
-  // 현실 누수 변수 (Life Friction)
-  deliveryFrequency: number; // 월 배달/충동 외식 횟수 (회)
-  deliveryCostPerTime: number; // 1회당 비용 (만원, 기본 2.5만원)
-  deliveryDefenseRate: number; // 배달 방어율 (%, 0% = 전부 시켜먹음, 100% = 전부 방어)
-  
-  annualEmergencyEvents: number; // 연간 경조사/돌발 이벤트 (회)
-  emergencyCostPerEvent: number; // 이벤트당 평균 지출 (만원, 기본 50만원)
+  // 사용자 맞춤형 지출 누수 목록 (Custom Expense Leaks)
+  expenseLeaks: ExpenseLeakItem[];
   
   // 돌발 수입 중단 쇼크 (Sudden Income Shock)
   enableIncomeShock: boolean; // 수입 중단 쇼크 활성화 여부
@@ -51,6 +59,9 @@ export interface SimulationResult {
   finalStress: number;
   totalInvestedPrincipal: number;
   totalLeakageAmount: number;
+  totalMonthlyLeak: number; // 월간 총 누수 금액 (만원)
+  topCulpritName?: string; // 1위 지출 주범 항목 이름
+  topCulpritMonthly?: number; // 1위 지출 주범 월 금액
   
   maxDrawdownRate: number; // 최대 낙폭 (MDD, %)
   maxDrawdownAmount: number; // 최악의 순간 증발한 금액 (만원)

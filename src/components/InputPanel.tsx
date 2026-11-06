@@ -1,6 +1,7 @@
 import React from 'react';
-import { DollarSign, Flame, Utensils, AlertTriangle, Skull, ShieldCheck, Briefcase } from 'lucide-react';
+import { DollarSign, Flame, AlertTriangle, Skull, ShieldCheck, Briefcase } from 'lucide-react';
 import type { SimulatorInputs } from '../types/simulator';
+import { ExpenseLeakManager } from './ExpenseLeakManager';
 
 interface InputPanelProps {
   inputs: SimulatorInputs;
@@ -15,14 +16,9 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
     });
   };
 
-  // 월간 지출 누수액 계산 (미리보기용)
-  const monthlyDeliveryLeak = inputs.deliveryFrequency * (1 - inputs.deliveryDefenseRate / 100) * inputs.deliveryCostPerTime;
-  const monthlyEmergencyLeak = (inputs.annualEmergencyEvents * inputs.emergencyCostPerEvent) / 12;
-  const totalLeakMonthly = Math.round(monthlyDeliveryLeak + monthlyEmergencyLeak);
-
   return (
     <div className="space-y-6">
-      {/* 1. 기본 투자 계획 */}
+      {/* 1. 기본 투자 & 소득 계획 */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
         <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800/80">
           <DollarSign className="w-5 h-5 text-emerald-400" />
@@ -200,70 +196,11 @@ export const InputPanel: React.FC<InputPanelProps> = ({ inputs, onChange }) => {
         )}
       </div>
 
-      {/* 3. 현실 라이프스타일 지출 누수 (Life Friction) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
-        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800/80">
-          <div className="flex items-center gap-2">
-            <Utensils className="w-5 h-5 text-amber-400" />
-            <h2 className="text-base font-semibold text-slate-100 m-0">3. 라이프스타일 누수 변수</h2>
-          </div>
-          <span className="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
-            월 -{totalLeakMonthly}만원 누수 중
-          </span>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <div className="flex justify-between items-center mb-1">
-              <label className="text-xs text-slate-400">월 배달/충동 외식 유혹 횟수</label>
-              <span className="text-xs font-mono font-bold text-amber-400">{inputs.deliveryFrequency} 회/월</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="25"
-              step="1"
-              value={inputs.deliveryFrequency}
-              onChange={(e) => updateField('deliveryFrequency', Number(e.target.value))}
-              className="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
-            />
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-1">
-              <label className="text-xs text-slate-400">배달 유혹 방어율 (참아낸 비율)</label>
-              <span className={`text-xs font-mono font-bold ${inputs.deliveryDefenseRate >= 70 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {inputs.deliveryDefenseRate}% {inputs.deliveryDefenseRate <= 30 && '(위험: 거의 다 시킴)'}
-              </span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              step="5"
-              value={inputs.deliveryDefenseRate}
-              onChange={(e) => updateField('deliveryDefenseRate', Number(e.target.value))}
-              className="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
-            />
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-1">
-              <label className="text-xs text-slate-400">연간 돌발 이벤트 (경조사/명절/병원비)</label>
-              <span className="text-xs font-mono font-bold text-slate-200">연 {inputs.annualEmergencyEvents} 회 (회당 50만원)</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="6"
-              step="1"
-              value={inputs.annualEmergencyEvents}
-              onChange={(e) => updateField('annualEmergencyEvents', Number(e.target.value))}
-              className="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
-            />
-          </div>
-        </div>
-      </div>
+      {/* 3. 라이프스타일 누수 커스텀 매니저 */}
+      <ExpenseLeakManager
+        items={inputs.expenseLeaks}
+        onChange={(newItems) => updateField('expenseLeaks', newItems)}
+      />
 
       {/* 4. 폭락장 스트레스 시나리오 */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
